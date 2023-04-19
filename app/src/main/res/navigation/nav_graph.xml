@@ -1,0 +1,26 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.kmetabus.mypet.MainFragment"
+        android:label="Menu"
+        tools:layout="@layout/fragment_menu">
+        <action
+            android:id="@+id/action_menuFragment_to_hospitalFragment"
+            app:destination="@id/hospitalFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/hospitalFragment"
+        android:name="com.kmetabus.mypet.ui.HospitalFragment"
+        android:label="Hospital"
+        tools:layout="@layout/fragment_hospital">
+    </fragment>
+
+    <!-- Add other fragments here -->
+
+</navigation>
