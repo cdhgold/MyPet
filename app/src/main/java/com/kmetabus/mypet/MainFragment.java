@@ -41,9 +41,9 @@ public class MainFragment extends Fragment implements OnMenuItemClickListener {
 
         // Navigate to the appropriate fragment based on "gbn" value
         if ("H".equals(gbn)) { // 동물병원
-            navController.navigate(R.id.hospitalFragment);
+            navController.navigate(R.id.action_menuFragment_to_hospitalFragment);
         } else if ("G".equals(gbn)) { // 동물장묘업
-            // navController.navigate(R.id.animalCemeteryFragment);
+            navController.navigate(R.id.action_mainFragment_to_petCemeteryFragment);
         } else if ("T".equals(gbn)) { // 동물미용실
             // navController.navigate(R.id.petSalonFragment);
         } else if ("C".equals(gbn)) { // 반려동물카페
