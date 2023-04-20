@@ -1,6 +1,16 @@
 package com.kmetabus.mypet;
 
+import android.content.Context;
+import android.os.AsyncTask;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -30,6 +40,7 @@ public class AnimalHospitalList {
         	Document document = null;
             String filePath = "D:\\work\\pet_hospital.xml";
             String xml = "";
+            // string.getBytest()
         	byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
             xml = new String(fileBytes, StandardCharsets.UTF_8);
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -121,6 +132,34 @@ public class AnimalHospitalList {
 
         return wgs84Coordinate;
     }
-	 
+    // 내부저장소에서 파일을 읽어온다.
+    public  static String readFromFile(Context context, String fileName) {
+        FileInputStream inputStream;
+        StringBuilder stringBuilder = new StringBuilder();
+
+        try {
+            inputStream = context.openFileInput(fileName);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String line;
+
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+
+            bufferedReader.close();
+            inputStreamReader.close();
+            inputStream.close();
+        } catch (IOException e) {
+
+        }
+
+        return stringBuilder.toString();
+    }
+    //웹서버에서 file 다운
+    public void downloadFile(Context context, String fileUrl, String fileName) {
+
+    }
+
 }
 
