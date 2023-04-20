@@ -6,6 +6,7 @@ public class AnimalHospital {
     private String address;
     private double latitude;
     private double longitude;
+	private double distance;
 
     public AnimalHospital(String name, String phone, String address, double latitude, double longitude) {
         this.name = name;
@@ -13,6 +14,7 @@ public class AnimalHospital {
         this.address = address;
         this.latitude = latitude;
 		this.longitude = longitude;
+		distanceTo(this.latitude,this.longitude);
 	}
 
 	public String getName() {
@@ -35,6 +37,10 @@ public class AnimalHospital {
 		return longitude;
 	}
 
+	public double getDistance() {
+		return distance;
+	}
+
 	public double distanceTo(double lat, double lng) {
 		double earthRadius = 6371; // ������ ������ (km)
 		double dLat = Math.toRadians(lat - this.latitude);
@@ -43,8 +49,7 @@ public class AnimalHospital {
 				   Math.cos(Math.toRadians(this.latitude)) * Math.cos(Math.toRadians(lat)) *
 				   Math.sin(dLng / 2) * Math.sin(dLng / 2);
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-		double distance = earthRadius * c;
-
+		this.distance = earthRadius * c;
 		return distance;
 	}
 }

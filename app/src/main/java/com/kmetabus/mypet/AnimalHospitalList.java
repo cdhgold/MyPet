@@ -1,13 +1,6 @@
 package com.kmetabus.mypet;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -17,11 +10,6 @@ import java.util.Comparator;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import org.osgeo.proj4j.BasicCoordinateTransform;
 import org.osgeo.proj4j.CRSFactory;
 import org.osgeo.proj4j.CoordinateReferenceSystem;
 import org.osgeo.proj4j.CoordinateTransform;
@@ -33,9 +21,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-// īī����Ű map eec92321686a8c02d61ddcd3edcaf8a1
+
 public class AnimalHospitalList {
-    public static void main(String[] args) {
+    public static List<AnimalHospital>  getList() {
+
+        List<AnimalHospital> hospitalList = new ArrayList<>();
         try {
         	Document document = null;
             String filePath = "D:\\work\\pet_hospital.xml";
@@ -55,7 +45,6 @@ public class AnimalHospitalList {
 
             NodeList nodeList = document.getElementsByTagName("row");
 
-            List<AnimalHospital> hospitalList = new ArrayList<>();
             //���� (Latitude): 37.566295
             //�浵 (Longitude): 126.977945
             double myLatitude = 37.566295; // 현위치
@@ -99,7 +88,7 @@ public class AnimalHospitalList {
 				return Double.compare(distanceA, distanceB);
 			});
 		 
-	        
+	        /*
             for (AnimalHospital hospital : hospitalList) {
             	String addr = hospital.getAddress();
             	Double lat = hospital.getLatitude();
@@ -112,10 +101,11 @@ public class AnimalHospitalList {
 				System.out.println("�Ÿ�: " + hospital.distanceTo(currentLatitude, currentLongitude) + " km");
 				System.out.println();
             }
-
+            */
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return hospitalList;
     }
 	public static ProjCoordinate convertUTMToWGS84(double x, double y ) {
 		String koreanCRSCode = "EPSG:5174"; // KOREA 2000 / Central Belt
