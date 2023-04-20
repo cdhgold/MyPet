@@ -8,10 +8,14 @@
         android:id="@+id/mainFragment"
         android:name="com.kmetabus.mypet.MainFragment"
         android:label="Menu"
-        tools:layout="@layout/fragment_menu">
+        tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_menuFragment_to_hospitalFragment"
             app:destination="@id/hospitalFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_petCemeteryFragment"
+            app:destination="@id/petCemeteryFragment" />
+
     </fragment>
 
     <fragment
@@ -21,6 +25,11 @@
         tools:layout="@layout/fragment_hospital">
     </fragment>
 
-    <!-- Add other fragments here -->
+    <fragment
+        android:id="@+id/petCemeteryFragment"
+        android:name="com.kmetabus.mypet.ui.PetCemeteryFragment"
+        android:label="Petcemetery"
+        tools:layout="@layout/fragment_petcemetery">
+    </fragment>
 
 </navigation>
