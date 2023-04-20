@@ -31,13 +31,17 @@ public class MainActivity extends AppCompatActivity  {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = navHostFragment.getNavController();
 
-        getCurrentLocation();// 현위치 위도,경도
+        Location location = getCurrentLocation();// 현위치 위도,경도
+        Bundle locationBundle = new Bundle();
+        locationBundle.putParcelable("location", location);
+        navController.navigate(R.id.hospitalFragment, locationBundle);
+
     }
 
-    private void getCurrentLocation() {
+    private Location getCurrentLocation() {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (lm == null) {
-            return;
+            return null;
         }
         if ( Build.VERSION.SDK_INT >= 23 &&
                 ContextCompat.checkSelfPermission( getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
@@ -64,6 +68,8 @@ public class MainActivity extends AppCompatActivity  {
                 1000,
                 1,
                 gpsLocationListener);
+
+        return location;
     }
     final LocationListener gpsLocationListener = new LocationListener() {
         public void onLocationChanged(Location location) {

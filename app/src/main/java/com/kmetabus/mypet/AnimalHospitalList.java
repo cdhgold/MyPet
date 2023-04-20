@@ -30,8 +30,6 @@ public class AnimalHospitalList {
         	Document document = null;
             String filePath = "D:\\work\\pet_hospital.xml";
             String xml = "";
-            //	xml = new String(Files.readAllBytes(Paths.get(filePath)));
-            //InputSource is = new InputSource(new InputStreamReader(new FileInputStream(filePath), "UTF-8"));
         	byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
             xml = new String(fileBytes, StandardCharsets.UTF_8);
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

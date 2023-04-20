@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.kmetabus.mypet.AnimalHospital;
 import com.kmetabus.mypet.AnimalHospitalList;
 import com.kmetabus.mypet.MainActivity;
 import com.kmetabus.mypet.MenuAdapter;
@@ -41,11 +42,12 @@ public class HospitalFragment extends Fragment implements OnListItemClickListene
         //layout
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         //id recycler
+        List<AnimalHospital> list = AnimalHospitalList.getList(); // data를 가져온다
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        listAdapter = new ListAdapter(getListItems(), this);
+        listAdapter = new ListAdapter(getListItems(list), this);
         recyclerView.setAdapter(listAdapter);
-        AnimalHospitalList.getList();
+
         return view;
 
     }
@@ -58,10 +60,16 @@ public class HospitalFragment extends Fragment implements OnListItemClickListene
     }
 
     // getMenuItems() 메서드 구현...
-    private List<ListItem> getListItems() {
+    private List<ListItem> getListItems(List<AnimalHospital> list) {
         List<ListItem> items = new ArrayList<>();
-        items.add(new ListItem("1", "mypet", "test", "H" ,"" ,0));
-        items.add(new ListItem("2", "mypet", "test", "H" ,"" ,0));
+        int i = 0;
+        for (AnimalHospital hospital : list) {
+            String addr = hospital.getAddress();
+            Double dist = hospital.getDistance();
+            i++;
+            items.add(new ListItem(i+"", hospital.getName(), hospital.getPhone(), addr ,dist+" km",0));
+
+        }
         // Add more menu items as needed
         return items;
     }

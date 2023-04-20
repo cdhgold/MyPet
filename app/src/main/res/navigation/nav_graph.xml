@@ -23,6 +23,10 @@
         android:name="com.kmetabus.mypet.ui.HospitalFragment"
         android:label="Hospital"
         tools:layout="@layout/fragment_hospital">
+        <argument
+            android:name="location"
+            app:argType="android.location.Location"
+            app:nullable="true" />
     </fragment>
 
     <fragment
