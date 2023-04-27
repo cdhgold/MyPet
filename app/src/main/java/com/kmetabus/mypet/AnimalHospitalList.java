@@ -18,6 +18,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.osgeo.proj4j.CRSFactory;
@@ -33,16 +37,25 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class AnimalHospitalList {
-    public static List<AnimalHospital>  getList() {
+    public static List<AnimalHospital>  getList( double myLatitude, double myLongitude,Context ctx  ) {
 
         List<AnimalHospital> hospitalList = new ArrayList<>();
         try {
         	Document document = null;
-            String filePath = "D:\\work\\pet_hospital.xml";
+            String fileUrl = "http://kmetabus.com/cdh/data/pet_hospital.xml";
+            String filePath = "pet_hospital.xml";
+            downloadFile(ctx, fileUrl, filePath);
+
+            //String filePath = "D:\\work\\pet_hospital.xml";
             String xml = "";
             // string.getBytest()
-        	byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
-            xml = new String(fileBytes, StandardCharsets.UTF_8);
+            FileInputStream fis = ctx.openFileInput(filePath)  ;
+            int size = fis.available();
+            byte[] buffer = new byte[size];
+            fis.read(buffer);
+
+            xml = new String(buffer, StandardCharsets.UTF_8);
+System.out.println("xml"+xml);
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             //Document document = builder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
@@ -56,8 +69,8 @@ public class AnimalHospitalList {
 
             //���� (Latitude): 37.566295
             //�浵 (Longitude): 126.977945
-            double myLatitude = 37.566295; // 현위치
-            double myLongitude = 126.977945; // ���� ��ġ�� �浵
+            //double myLatitude = 37.566295; // 현위치
+            //double myLongitude = 126.977945; // ���� ��ġ�� �浵
 
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
@@ -84,19 +97,19 @@ public class AnimalHospitalList {
                     hospitalList.add(hospital);
                 }
             }
-
+            // 현재좌표로 정렬
             hospitalList.sort(Comparator.comparingDouble(h -> h.distanceTo(myLatitude, myLongitude)));
 			// ���� ��ġ (WGS84 ��ǥ��)�� �Է��ϼ���.
-			double currentLatitude = 37.5665; // ��: �����û ����
-			double currentLongitude = 126.9780; // ��: �����û �浵
+			//double currentLatitude = 37.5665; // ��: �����û ����
+			//double currentLongitude = 126.9780; // ��: �����û �浵
 
-			// ���� ��ġ�� �������� ���� ����� �������� ������ �����մϴ�.
+			/*
 			Collections.sort(hospitalList, (a, b) -> {
 				double distanceA = a.distanceTo(currentLatitude, currentLongitude);
 				double distanceB = b.distanceTo(currentLatitude, currentLongitude);
 				return Double.compare(distanceA, distanceB);
 			});
-		 
+		 */
 	        /*
             for (AnimalHospital hospital : hospitalList) {
             	String addr = hospital.getAddress();
@@ -157,8 +170,32 @@ public class AnimalHospitalList {
         return stringBuilder.toString();
     }
     //웹서버에서 file 다운
-    public void downloadFile(Context context, String fileUrl, String fileName) {
+    public static void downloadFile(Context context, String fileUrl, String fileName) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<?> future = executor.submit(() -> {
+            try (InputStream inputStream = new URL(fileUrl).openStream();
+                 FileOutputStream outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)) {
 
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+                outputStream.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        // Optional: Wait for the download to complete
+        try {
+            future.get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            executor.shutdown();
+        }
     }
 
 }
