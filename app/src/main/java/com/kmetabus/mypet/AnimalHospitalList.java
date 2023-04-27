@@ -37,7 +37,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class AnimalHospitalList {
-    public static List<AnimalHospital>  getList( double myLatitude, double myLongitude,Context ctx  ) {
+    public static List<AnimalHospital>  getList( double myLatitude, double myLongitude,Context ctx ,ListViewModel listanHospotal ) {
 
         List<AnimalHospital> hospitalList = new ArrayList<>();
         try {
@@ -127,6 +127,7 @@ System.out.println("xml"+xml);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        listanHospotal.setDataList(hospitalList);
         return hospitalList;
     }
 	public static ProjCoordinate convertUTMToWGS84(double x, double y ) {

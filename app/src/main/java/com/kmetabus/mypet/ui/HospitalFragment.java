@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,6 +24,7 @@ import android.view.ViewGroup;
 
 import com.kmetabus.mypet.AnimalHospital;
 import com.kmetabus.mypet.AnimalHospitalList;
+import com.kmetabus.mypet.ListViewModel;
 import com.kmetabus.mypet.MainActivity;
 import com.kmetabus.mypet.MenuAdapter;
 import com.kmetabus.mypet.MenuItem;
@@ -41,6 +43,7 @@ public class HospitalFragment extends Fragment implements OnListItemClickListene
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //layout
         Context ctx = getActivity();
+        List<AnimalHospital> list = null;
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         Bundle locationBundle = getArguments();
         if (locationBundle != null) {
@@ -51,7 +54,14 @@ public class HospitalFragment extends Fragment implements OnListItemClickListene
                 Double logi = location.getLongitude();
                 //id recycler
                 Context ctx2 = ctx.getApplicationContext();
-                List<AnimalHospital> list = AnimalHospitalList.getList(lat, logi,ctx2 ); // data를 가져온다
+                ListViewModel listanHospotal = new ViewModelProvider(this).get(ListViewModel.class);
+                list = listanHospotal.getDataList();
+                if(list == null || list.size() == 0 ) {
+
+                    System.out.println("ListViewModel 여기왔나 "+list.size());
+                    list = AnimalHospitalList.getList(lat, logi, ctx2, listanHospotal); // data를 가져온다
+                }
+System.out.println("ListViewModel"+list.size());
                 recyclerView = view.findViewById(R.id.recycler_view);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 listAdapter = new ListAdapter(getListItems(list), this);
