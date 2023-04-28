@@ -37,7 +37,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class AnimalHospitalList {
-    public static List<AnimalHospital>  getList( double myLatitude, double myLongitude,Context ctx ,ListViewModel listanHospotal ) {
+    public static List<AnimalHospital>  getList( double myLatitude, double myLongitude,Context ctx ) {
 
         List<AnimalHospital> hospitalList = new ArrayList<>();
         try {
@@ -55,7 +55,7 @@ public class AnimalHospitalList {
             fis.read(buffer);
 
             xml = new String(buffer, StandardCharsets.UTF_8);
-System.out.println("xml"+xml);
+//System.out.println("xml"+xml);
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             //Document document = builder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
@@ -127,7 +127,7 @@ System.out.println("xml"+xml);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        listanHospotal.setDataList(hospitalList);
+        ListViewModel.setDataList(hospitalList);
         return hospitalList;
     }
 	public static ProjCoordinate convertUTMToWGS84(double x, double y ) {

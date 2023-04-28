@@ -45,21 +45,21 @@ public class HospitalFragment extends Fragment implements OnListItemClickListene
         Context ctx = getActivity();
         List<AnimalHospital> list = null;
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-        Bundle locationBundle = getArguments();
-        if (locationBundle != null) {
-            Location location = locationBundle.getParcelable("location");
-            if (location != null) {
+        Location location = ListViewModel.getLocation();
+
+ System.out.println("location "+ location);
+        if (location != null) {
                 // 위치 데이터를 처리하는 로직을 구현
                 Double lat = location.getLatitude();
                 Double logi = location.getLongitude();
                 //id recycler
                 Context ctx2 = ctx.getApplicationContext();
-                ListViewModel listanHospotal = new ViewModelProvider(this).get(ListViewModel.class);
-                list = listanHospotal.getDataList();
+                //ListViewModel listanHospotal = new ViewModelProvider(this).get(ListViewModel.class);
+                list = ListViewModel.getDataList();
                 if(list == null || list.size() == 0 ) {
 
-                    System.out.println("ListViewModel 여기왔나 "+list.size());
-                    list = AnimalHospitalList.getList(lat, logi, ctx2, listanHospotal); // data를 가져온다
+                    System.out.println("ListViewModel 여기왔나 "+list);
+                    list = AnimalHospitalList.getList(lat, logi, ctx2 ); // data를 가져온다
                 }
 System.out.println("ListViewModel"+list.size());
                 recyclerView = view.findViewById(R.id.recycler_view);
@@ -67,7 +67,7 @@ System.out.println("ListViewModel"+list.size());
                 listAdapter = new ListAdapter(getListItems(list), this);
                 recyclerView.setAdapter(listAdapter);
 
-            }
+
         }
         return view;
 

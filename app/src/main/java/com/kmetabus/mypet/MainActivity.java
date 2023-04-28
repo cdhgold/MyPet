@@ -30,11 +30,15 @@ public class MainActivity extends AppCompatActivity  {
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = navHostFragment.getNavController();
-
-        Location location = getCurrentLocation();// 현위치 위도,경도
-        Bundle locationBundle = new Bundle();
-        locationBundle.putParcelable("location", location);
-        navController.navigate(R.id.hospitalFragment, locationBundle);
+        Location loc = ListViewModel.getLocation();
+System.out.println("loc  "+loc+" getLatitude " );
+        if(loc == null ) {
+            Location location = getCurrentLocation();// 현위치 위도,경도
+            ListViewModel.setLocation(location);
+        }
+        //Bundle locationBundle = new Bundle();
+        //locationBundle.putParcelable("location", location);
+       // navController.navigate(R.id.hospitalFragment, locationBundle);
 
     }
 
