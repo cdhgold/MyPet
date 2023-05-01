@@ -11,13 +11,15 @@ import java.util.List;
 public class ListViewModel  extends ViewModel {
     private static List<AnimalHospital> dataList;
     private static Location loc;
+    private static String  sloc;
 
     public static List<AnimalHospital> getDataList() {
         return dataList;
     }
 
-    public static void setDataList(List<AnimalHospital> dataList) {
-        dataList = dataList;
+    public static void setDataList(List<AnimalHospital> list) {
+
+        dataList = list;
     }
 
     public static Location getLocation() {
@@ -26,6 +28,13 @@ public class ListViewModel  extends ViewModel {
 
     public static void setLocation(Location  ploc) {
         loc = ploc;
+    }
+    public static String getSloc() {
+        return sloc;
+    }
+    public static void setSloc(String tloc) {
+        sloc = tloc;
+
     }
 
 }

@@ -10,13 +10,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.kmetabus.mypet.R;
-
+/*
+동물 카페
+ */
 public class PetCafeFragment extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_petcemetery, container, false);
+        return inflater.inflate(R.layout.fragment_cafe, container, false);
     }
 
     @Override

@@ -1,10 +1,12 @@
 package com.kmetabus.mypet.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -74,9 +76,18 @@ System.out.println("ListViewModel"+list.size());
     }
 
     @Override
-    public void onListItemClick(ListItem listItem) {
+    public void onListItemClick(View v, ListItem listItem) {
+        Location loc = listItem.getLoc();
+        String label = listItem.getCol1();// 병원명  마커에 표시할 라벨
+        String lat = String.valueOf(loc.getLatitude());
+        String logi = String.valueOf(loc.getLongitude());
+                //NavController navController = Navigation.findNavController(requireView());
+        String location = lat+","+ logi; // 병원 위치
+        Uri gmmIntentUri = Uri.parse("geo:" + location + "?z=12&q=" + location + "(" + label + ")"); // Uri 객체 생성
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri); // Intent 객체 생성
+        mapIntent.setPackage("com.google.android.apps.maps");
 
-        NavController navController = Navigation.findNavController(requireView());
+        v.getContext().startActivity(mapIntent);
 
     }
 
@@ -87,8 +98,13 @@ System.out.println("ListViewModel"+list.size());
         for (AnimalHospital hospital : list) {
             String addr = hospital.getAddress();
             Double dist = hospital.getDistance();
+            long idist = Math.round(dist) ;
+            String locprovier =ListViewModel.getSloc();
+            Location loc = new Location(locprovier);
+            loc.setLatitude(hospital.getLatitude());
+            loc.setLongitude(hospital.getLongitude());
             i++;
-            items.add(new ListItem(i+"", hospital.getName(), hospital.getPhone(), addr ,dist+" km",0));
+            items.add(new ListItem(i+"", hospital.getName(), hospital.getPhone(), addr ,idist+" km",0, loc ));
 
         }
         // Add more menu items as needed

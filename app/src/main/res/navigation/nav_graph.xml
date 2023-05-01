@@ -15,6 +15,12 @@
         <action
             android:id="@+id/action_mainFragment_to_petCemeteryFragment"
             app:destination="@id/petCemeteryFragment" />
+        <action
+            android:id="@+id/action_beauty"
+            app:destination="@id/beauty" />
+        <action
+            android:id="@+id/action_cafe"
+            app:destination="@id/cafe" />
 
     </fragment>
 
@@ -35,5 +41,16 @@
         android:label="Petcemetery"
         tools:layout="@layout/fragment_petcemetery">
     </fragment>
-
+    <fragment
+        android:id="@+id/beauty"
+        android:name="com.kmetabus.mypet.ui.PetSalonFragment"
+        android:label="Petcemetery"
+        tools:layout="@layout/fragment_beauty">
+    </fragment>
+    <fragment
+        android:id="@+id/cafe"
+        android:name="com.kmetabus.mypet.ui.PetCafeFragment"
+        android:label="Petcemetery"
+        tools:layout="@layout/fragment_cafe">
+    </fragment>
 </navigation>

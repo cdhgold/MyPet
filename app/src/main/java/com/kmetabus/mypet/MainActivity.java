@@ -28,17 +28,12 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-        NavController navController = navHostFragment.getNavController();
         Location loc = ListViewModel.getLocation();
-System.out.println("loc  "+loc+" getLatitude " );
         if(loc == null ) {
             Location location = getCurrentLocation();// 현위치 위도,경도
             ListViewModel.setLocation(location);
         }
-        //Bundle locationBundle = new Bundle();
-        //locationBundle.putParcelable("location", location);
-       // navController.navigate(R.id.hospitalFragment, locationBundle);
+
 
     }
 
@@ -82,8 +77,8 @@ System.out.println("loc  "+loc+" getLatitude " );
             double longitude = location.getLongitude(); // 경도
             double latitude = location.getLatitude(); // 위도
             double altitude = location.getAltitude(); // 고도
-
-            System.out.println("Latitude: " + latitude + ", Longitude: " + longitude);
+            ListViewModel.setSloc(provider);
+//System.out.println("Latitude: " + latitude + ", Longitude: " + longitude);
         } public void onStatusChanged(String provider, int status, Bundle extras) {
 
         } public void onProviderEnabled(String provider) {

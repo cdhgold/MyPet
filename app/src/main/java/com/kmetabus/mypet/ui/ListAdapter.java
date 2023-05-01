@@ -65,14 +65,14 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
             col3 = itemView.findViewById(R.id.col3);
             col4 = itemView.findViewById(R.id.col4);
 
-            ListItemImg = itemView.findViewById(R.id.menu_item_image);
+            ListItemImg = itemView.findViewById(R.id.menu_item_image); // 이미지 있을시,
             this.onListItemClickListener = onListItemClickListener;
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            onListItemClickListener.onListItemClick(listItems.get(getBindingAdapterPosition()));
+            onListItemClickListener.onListItemClick(v , listItems.get(getBindingAdapterPosition()));
         }
 
 

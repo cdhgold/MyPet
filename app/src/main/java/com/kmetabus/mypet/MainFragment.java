@@ -15,7 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/*
+메뉴 fragment
+ */
 public class MainFragment extends Fragment implements OnMenuItemClickListener {
 
     private RecyclerView recyclerView;
@@ -44,10 +46,10 @@ public class MainFragment extends Fragment implements OnMenuItemClickListener {
             navController.navigate(R.id.action_menuFragment_to_hospitalFragment);
         } else if ("G".equals(gbn)) { // 동물장묘업
             navController.navigate(R.id.action_mainFragment_to_petCemeteryFragment);
-        } else if ("T".equals(gbn)) { // 동물미용실
-            // navController.navigate(R.id.petSalonFragment);
-        } else if ("C".equals(gbn)) { // 반려동물카페
-            // navController.navigate(R.id.petCafeFragment);
+        } else if ("01".equals(gbn)) { // 동물미용실
+            navController.navigate(R.id.beauty);
+        } else if ("02".equals(gbn)) { // 반려동물카페
+            navController.navigate(R.id.cafe);
         }
     }
 
@@ -56,8 +58,8 @@ public class MainFragment extends Fragment implements OnMenuItemClickListener {
         List<MenuItem> items = new ArrayList<>();
         items.add(new MenuItem("동물병원", "mypet", R.drawable.hospital, "H" ));
         items.add(new MenuItem("동물장묘업", "mypet",R.drawable.god,     "G"));
-        items.add(new MenuItem("동물미용실", "mypet",R.drawable.mypet,   "T"));
-        items.add(new MenuItem("반려동물카페", "mypet",R.drawable.mypet, "T"));
+        items.add(new MenuItem("동물미용실", "mypet",R.drawable.mypet,   "01"));
+        items.add(new MenuItem("반려동물카페", "mypet",R.drawable.mypet, "02"));
         // Add more menu items as needed
         return items;
     }

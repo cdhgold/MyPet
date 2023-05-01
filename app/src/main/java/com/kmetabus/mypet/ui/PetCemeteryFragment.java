@@ -10,7 +10,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.kmetabus.mypet.R;
-
+/*
+동물장묘
+ */
 public class PetCemeteryFragment extends Fragment {
 
     @Nullable
