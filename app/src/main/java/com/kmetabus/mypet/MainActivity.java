@@ -15,14 +15,18 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity  {
 
-
+    private static final long DOUBLE_BACK_PRESS_INTERVAL = 2000; // 2초 간격으로 뒤로 가기 버튼을 눌렀을 때 종료
+    private boolean doubleBackToExitPressedOnce = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,9 +34,11 @@ public class MainActivity extends AppCompatActivity  {
 
         Location loc = ListViewModel.getLocation();
         if(loc == null ) {
+            System.out.println("loc == null");
             Location location = getCurrentLocation();// 현위치 위도,경도
             ListViewModel.setLocation(location);
         }
+        System.out.println("loc1 == "+loc);
 
 
     }
@@ -87,4 +93,30 @@ public class MainActivity extends AppCompatActivity  {
 
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ListViewModel.setSloc("");   // static 변수를 null로 초기화합니다.
+        ListViewModel.setLocation(null);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "뒤로 가기 버튼을 한 번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
+
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, DOUBLE_BACK_PRESS_INTERVAL);
+    }
+
 }
