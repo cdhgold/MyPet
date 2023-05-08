@@ -34,6 +34,7 @@ import com.kmetabus.mypet.OnMenuItemClickListener;
 import com.kmetabus.mypet.R;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class HospitalFragment extends Fragment implements OnListItemClickListener {
@@ -103,8 +104,11 @@ System.out.println("ListViewModel"+list.size());
             Location loc = new Location(locprovier);
             loc.setLatitude(hospital.getLatitude());
             loc.setLongitude(hospital.getLongitude());
+            boolean isNew = hospital.getIsNew();
+            Date today = hospital.getToday();
+
             i++;
-            items.add(new ListItem(i+"", hospital.getName(), hospital.getPhone(), addr ,idist+" km",0, loc ));
+            items.add(new ListItem(i+"", hospital.getName(), hospital.getPhone(), addr ,idist+" km",0, loc,isNew, today ));
 
         }
         // Add more menu items as needed
