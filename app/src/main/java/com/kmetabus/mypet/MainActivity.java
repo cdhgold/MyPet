@@ -20,8 +20,12 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -39,7 +43,33 @@ public class MainActivity extends AppCompatActivity  {
             ListViewModel.setLocation(location);
         }
         System.out.println("loc1 == "+loc);
+        // xml data변경여부확인
+        String BASE_URL = "https://kmetabus.com/";
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
 
+        ApiService apiService = retrofit.create(ApiService.class);
+
+        Call<ServerResponse> call = apiService.getValue();
+        call.enqueue(new Callback<ServerResponse>() {
+            @Override
+            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                if (response.isSuccessful()) {
+                    ServerResponse serverResponse = response.body();
+                    Log.d("kmetabus", "Value from server: " + serverResponse.getMessage());
+                } else {
+                    Log.e("kmetabus", "Request failed. HTTP status code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ServerResponse> call, Throwable t) {
+                Log.e("kmetabus", "Request failed: " + t.getMessage());
+            }
+        });
 
     }
 
@@ -99,6 +129,7 @@ public class MainActivity extends AppCompatActivity  {
         super.onDestroy();
         ListViewModel.setSloc("");   // static 변수를 null로 초기화합니다.
         ListViewModel.setLocation(null);
+
     }
 
     @Override
