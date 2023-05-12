@@ -1,5 +1,8 @@
 package com.kmetabus.mypet.ui;
 import android.location.Location;
+
+import java.util.Date;
+
 public class ListItem {
     private String seq;
     private String col1;
@@ -8,7 +11,9 @@ public class ListItem {
     private String col4;
     private int imageResourceId;
     private Location loc;
-    public ListItem(String seq, String col1,String col2, String col3, String col4,  int imageResourceId,Location loc  ) {
+    private boolean isNew; // 유료결재시 한달간 top에 링크
+    private Date today;
+    public ListItem(String seq, String col1,String col2, String col3, String col4,  int imageResourceId,Location loc ,boolean isnew, Date today ) {
         this.seq = seq;
         this.col1 = col1;
         this.col2 = col2;
@@ -16,6 +21,9 @@ public class ListItem {
         this.col4 = col4;
         this.imageResourceId = imageResourceId;
         this.loc = loc;
+        this.isNew = isnew;
+        this.today = today;
+
 
     }
 
@@ -41,5 +49,10 @@ public class ListItem {
     public int getImageResourceId() {
         return imageResourceId;
     }
-
+    public boolean getIsNew() {
+        return isNew;
+    }
+    public Date getToday() {
+        return today;
+    }
 }

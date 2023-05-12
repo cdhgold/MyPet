@@ -1,5 +1,7 @@
 package com.kmetabus.mypet;
 
+import java.util.Date;
+
 public class AnimalHospital {
     private String name;
     private String phone;
@@ -7,14 +9,18 @@ public class AnimalHospital {
     private double latitude;
     private double longitude;
 	private double distance;
+	private boolean isNew; // 유료결재시 한달간 top에 링크
+	private Date today;
 
-    public AnimalHospital(String name, String phone, String address, double latitude, double longitude) {
+	public AnimalHospital(String name, String phone, String address, double latitude, double longitude,boolean isnew, Date today) {
         this.name = name;
         this.phone = phone;
         this.address = address;
         this.latitude = latitude;
 		this.longitude = longitude;
 		distanceTo(this.latitude,this.longitude);
+		this.isNew = isnew;
+		this.today = today;
 	}
 
 	public String getName() {
@@ -51,5 +57,12 @@ public class AnimalHospital {
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 		this.distance = earthRadius * c;
 		return distance;
+	}
+
+	public boolean getIsNew() {
+		return isNew;
+	}
+	public Date getToday() {
+		return today;
 	}
 }

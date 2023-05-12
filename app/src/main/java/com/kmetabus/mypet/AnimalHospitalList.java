@@ -1,7 +1,6 @@
 package com.kmetabus.mypet;
 
 import android.content.Context;
-import android.os.AsyncTask;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -12,15 +11,19 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -29,7 +32,6 @@ import org.osgeo.proj4j.CoordinateReferenceSystem;
 import org.osgeo.proj4j.CoordinateTransform;
 import org.osgeo.proj4j.CoordinateTransformFactory;
 import org.osgeo.proj4j.ProjCoordinate;
-import org.osgeo.proj4j.proj.Projection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -71,18 +73,27 @@ public class AnimalHospitalList {
             //�浵 (Longitude): 126.977945
             //double myLatitude = 37.566295; // 현위치
             //double myLongitude = 126.977945; // ���� ��ġ�� �浵
-
+            Date date = null;
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
 
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
-
+                    String isNew = null;
+                    String today = null;
                     String name = element.getElementsByTagName("bplcNm").item(0).getTextContent();
                     String phone = element.getElementsByTagName("siteTel").item(0).getTextContent();
                     String address = element.getElementsByTagName("siteWhlAddr").item(0).getTextContent(); 
                     String sx = element.getElementsByTagName("x").item(0).getTextContent().trim();
                     String sy = element.getElementsByTagName("y").item(0).getTextContent().trim();
+                    if( element.getElementsByTagName("isNew").getLength() >0 )
+                        isNew = element.getElementsByTagName("isNew").item(0).getTextContent().trim();
+                    if( element.getElementsByTagName("today").getLength() >0 ) {
+                        today = element.getElementsByTagName("today").item(0).getTextContent().trim();
+                        date = dateFormat.parse(today);
+                    }
+
                     if("".equals(sx) ) {
                     	continue;
                     }
@@ -93,23 +104,42 @@ public class AnimalHospitalList {
 					ProjCoordinate wgs84Coordinate = convertUTMToWGS84(x, y );
 
 					//double[] latLng = getLatLngFromAddress(address);
-                    AnimalHospital hospital = new AnimalHospital(name, phone, address, wgs84Coordinate.y, wgs84Coordinate.x);
+                    AnimalHospital hospital = new AnimalHospital(name, phone, address, wgs84Coordinate.y, wgs84Coordinate.x, Boolean.parseBoolean(isNew)  ,date);
                     hospitalList.add(hospital);
                 }
             }
             // 현재좌표로 정렬
-            hospitalList.sort(Comparator.comparingDouble(h -> h.distanceTo(myLatitude, myLongitude)));
+            //hospitalList.sort(Comparator.comparingDouble(h -> h.distanceTo(myLatitude, myLongitude)));
 			// ���� ��ġ (WGS84 ��ǥ��)�� �Է��ϼ���.
 			//double currentLatitude = 37.5665; // ��: �����û ����
 			//double currentLongitude = 126.9780; // ��: �����û �浵
 
-			/*
+            // isNew는 30일간만 유효
+            AtomicReference<Date> atodt = new AtomicReference<>(null);
+            AtomicReference<Date> btodt = new AtomicReference<>(null);
+            LocalDate nowdt = LocalDate.now();
 			Collections.sort(hospitalList, (a, b) -> {
-				double distanceA = a.distanceTo(currentLatitude, currentLongitude);
-				double distanceB = b.distanceTo(currentLatitude, currentLongitude);
-				return Double.compare(distanceA, distanceB);
+                atodt.set(a.getToday());
+                btodt.set(b.getToday());
+                Instant aInstant = atodt.get().toInstant();//UTC 기준으로 1970년 1월 1일 0시 0분 0초를 숫자 0
+                ZoneId defaultZoneId = ZoneId.systemDefault();//서버 또는 클라이언트의 기본 시간대 설정에 따라 시간대를 결정
+                LocalDate aLocalDate = aInstant.atZone(defaultZoneId).toLocalDate();
+                long aDaysDifference = Math.abs(ChronoUnit.DAYS.between(nowdt, aLocalDate));
+                Instant bInstant = b.getToday().toInstant();
+                LocalDate bLocalDate = bInstant.atZone(defaultZoneId).toLocalDate();
+                long bDaysDifference = Math.abs(ChronoUnit.DAYS.between(nowdt, bLocalDate));
+
+                if (a.getIsNew() && !b.getIsNew() && aDaysDifference <= 30 ) {
+                    return -1;
+                } else if (!a.getIsNew() && b.getIsNew() && bDaysDifference <= 30 ) {
+                    return 1;
+                } else {
+                    double distanceA = a.distanceTo(myLatitude, myLongitude);
+                    double distanceB = b.distanceTo(myLatitude, myLongitude);
+                    return Double.compare(distanceA, distanceB);
+                }
 			});
-		 */
+
 	        /*
             for (AnimalHospital hospital : hospitalList) {
             	String addr = hospital.getAddress();

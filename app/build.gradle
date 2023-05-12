@@ -44,9 +44,6 @@ android {
 }
 
 dependencies {
-    // 서버통신
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     //noinspection GradlePath
     implementation 'androidx.navigation:navigation-fragment:2.4.1'
