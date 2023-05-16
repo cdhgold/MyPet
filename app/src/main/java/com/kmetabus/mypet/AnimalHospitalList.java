@@ -47,7 +47,7 @@ public class AnimalHospitalList {
         try {
         	Document document = null;
             String fileUrl = "http://kmetabus.com/cdh/data/pet_hospital.xml";
-            String filePath = "pet_hospital.xml"; // 파일생성이후에는 내부저장소에서 읽는다. 코딩예정
+            String filePath = "pet_hospital.xml";
             try {
 //System.out.println("파일 존재 0"  );
                 FileInputStream fis = ctx.openFileInput(filePath);

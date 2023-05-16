@@ -59,15 +59,20 @@ public class MainActivity extends AppCompatActivity  {
             public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
                 if (response.isSuccessful()) {
                     ServerResponse serverResponse = response.body();
-                    Log.d("kmetabus", "Value from server: " + serverResponse.getMessage());
+                    String newchk = serverResponse.getMessage();
+                    if("new".equals(newchk)){
+                        // 새로다운로드한다.
+
+                    }
+                    Log.d("cdhgold", "Value from server: " + serverResponse.getMessage());
                 } else {
-                    Log.e("kmetabus", "Request failed. HTTP status code: " + response.code());
+                    Log.e("cdhgold", "Request failed. HTTP status code: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) {
-                Log.e("kmetabus", "Request failed: " + t.getMessage());
+                Log.e("cdhgold", "Request failed: " + t.getMessage());
             }
         });
 
