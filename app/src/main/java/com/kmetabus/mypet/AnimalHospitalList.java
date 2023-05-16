@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +48,15 @@ public class AnimalHospitalList {
         	Document document = null;
             String fileUrl = "http://kmetabus.com/cdh/data/pet_hospital.xml";
             String filePath = "pet_hospital.xml"; // 파일생성이후에는 내부저장소에서 읽는다. 코딩예정
-            downloadFile(ctx, fileUrl, filePath);
+            try {
+//System.out.println("파일 존재 0"  );
+                FileInputStream fis = ctx.openFileInput(filePath);
+                // 파일 읽기와 관련된 코드
+            } catch (FileNotFoundException e) {
+//System.out.println("파일 존재 1"  );
+                // 파일이 없을 때의 처리 코드
+                downloadFile(ctx, fileUrl, filePath);
+            }
 
             //String filePath = "D:\\work\\pet_hospital.xml";
             String xml = "";
