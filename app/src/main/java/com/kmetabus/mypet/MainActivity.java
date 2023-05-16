@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity  {
         }
         System.out.println("loc1 == "+loc);
         // xml data변경여부확인
-        String BASE_URL = "https://kmetabus.com/";
+        String BASE_URL = "http://kmetabus.com/";
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())

@@ -63,8 +63,10 @@ public class HospitalFragment extends Fragment implements OnListItemClickListene
 
                     System.out.println("ListViewModel 여기왔나 "+list);
                     list = AnimalHospitalList.getList(lat, logi, ctx2 ); // data를 가져온다
+                    ListViewModel.setDataList(list);
                 }
 System.out.println("ListViewModel"+list.size());
+
                 recyclerView = view.findViewById(R.id.recycler_view);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 listAdapter = new ListAdapter(getListItems(list), this);

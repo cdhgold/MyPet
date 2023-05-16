@@ -22,7 +22,16 @@ public class AnimalHospital {
 		this.isNew = isnew;
 		this.today = today;
 	}
-
+	public AnimalHospital(String name, String phone, String address, double latitude, double longitude,boolean isnew, Date today,double nlati, double nlogi) {
+		this.name = name;
+		this.phone = phone;
+		this.address = address;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		distanceTo( nlati,nlogi);
+		this.isNew = isnew;
+		this.today = today;
+	}
 	public String getName() {
 		return name;
 	}
@@ -48,7 +57,7 @@ public class AnimalHospital {
 	}
 
 	public double distanceTo(double lat, double lng) {
-		double earthRadius = 6371; // ������ ������ (km)
+		double earthRadius = 6371; // 지구의 평균 반지름 (km)
 		double dLat = Math.toRadians(lat - this.latitude);
 		double dLng = Math.toRadians(lng - this.longitude);
 		double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +

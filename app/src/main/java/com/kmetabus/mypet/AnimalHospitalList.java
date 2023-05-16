@@ -39,13 +39,14 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class AnimalHospitalList {
+    //myLatitude 현재 기기 좌표
     public static List<AnimalHospital>  getList( double myLatitude, double myLongitude,Context ctx ) {
 
         List<AnimalHospital> hospitalList = new ArrayList<>();
         try {
         	Document document = null;
             String fileUrl = "http://kmetabus.com/cdh/data/pet_hospital.xml";
-            String filePath = "pet_hospital.xml";
+            String filePath = "pet_hospital.xml"; // 파일생성이후에는 내부저장소에서 읽는다. 코딩예정
             downloadFile(ctx, fileUrl, filePath);
 
             //String filePath = "D:\\work\\pet_hospital.xml";
@@ -89,8 +90,8 @@ public class AnimalHospitalList {
                     String sy = element.getElementsByTagName("y").item(0).getTextContent().trim();
                     if( element.getElementsByTagName("isNew").getLength() >0 )
                         isNew = element.getElementsByTagName("isNew").item(0).getTextContent().trim();
-                    if( element.getElementsByTagName("today").getLength() >0 ) {
-                        today = element.getElementsByTagName("today").item(0).getTextContent().trim();
+                    if( element.getElementsByTagName("updateDt").getLength() >0 ) {
+                        today = element.getElementsByTagName("updateDt").item(0).getTextContent().trim();
                         date = dateFormat.parse(today);
                     }
 
@@ -99,15 +100,20 @@ public class AnimalHospitalList {
                     }
                     double x = Double.parseDouble(sx);
                     double y = Double.parseDouble(sy);
- 
+                    boolean isnew = Boolean.parseBoolean(isNew);
                     // UTM ��ǥ�� WGS84 ��ǥ��� ��ȯ�ϴ� �ڵ尡 �ʿ��մϴ�.
-					ProjCoordinate wgs84Coordinate = convertUTMToWGS84(x, y );
-
-					//double[] latLng = getLatLngFromAddress(address);
-                    AnimalHospital hospital = new AnimalHospital(name, phone, address, wgs84Coordinate.y, wgs84Coordinate.x, Boolean.parseBoolean(isNew)  ,date);
+                    AnimalHospital hospital = null;
+                    if(!isnew) {
+                        ProjCoordinate wgs84Coordinate = convertUTMToWGS84(x, y);
+                        //double[] latLng = getLatLngFromAddress(address);
+                        hospital = new AnimalHospital(name, phone, address, wgs84Coordinate.y, wgs84Coordinate.x, isnew, date);
+                    }else{// 신규건
+                        System.out.println("cdhgold 9"+x+" " +y );
+                        hospital = new AnimalHospital(name, phone, address, x, y, isnew, date,myLatitude, myLongitude);
+                    }
                     hospitalList.add(hospital);
                 }
-            }
+            }// end for
             // 현재좌표로 정렬
             //hospitalList.sort(Comparator.comparingDouble(h -> h.distanceTo(myLatitude, myLongitude)));
 			// ���� ��ġ (WGS84 ��ǥ��)�� �Է��ϼ���.
@@ -115,10 +121,13 @@ public class AnimalHospitalList {
 			//double currentLongitude = 126.9780; // ��: �����û �浵
 
             // isNew는 30일간만 유효
-            AtomicReference<Date> atodt = new AtomicReference<>(null);
-            AtomicReference<Date> btodt = new AtomicReference<>(null);
+            AtomicReference<Date> atodt = new AtomicReference<>();
+            AtomicReference<Date> btodt = new AtomicReference<>();
             LocalDate nowdt = LocalDate.now();
 			Collections.sort(hospitalList, (a, b) -> {
+                Date aDate = a.getToday();
+                Date bDate = b.getToday();
+
                 atodt.set(a.getToday());
                 btodt.set(b.getToday());
                 Instant aInstant = atodt.get().toInstant();//UTC 기준으로 1970년 1월 1일 0시 0분 0초를 숫자 0
@@ -129,15 +138,19 @@ public class AnimalHospitalList {
                 LocalDate bLocalDate = bInstant.atZone(defaultZoneId).toLocalDate();
                 long bDaysDifference = Math.abs(ChronoUnit.DAYS.between(nowdt, bLocalDate));
 
-                if (a.getIsNew() && !b.getIsNew() && aDaysDifference <= 30 ) {
+                if (a.getIsNew()   && aDaysDifference <= 30) {
+                    System.out.println("cdhgold 1");
                     return -1;
-                } else if (!a.getIsNew() && b.getIsNew() && bDaysDifference <= 30 ) {
-                    return 1;
+                } else if ( b.getIsNew() && bDaysDifference <= 30) {
+                    System.out.println("cdhgold 2");
+                    return -1;
                 } else {
+                    System.out.println("cdhgold 3");
                     double distanceA = a.distanceTo(myLatitude, myLongitude);
                     double distanceB = b.distanceTo(myLatitude, myLongitude);
                     return Double.compare(distanceA, distanceB);
                 }
+
 			});
 
 	        /*
