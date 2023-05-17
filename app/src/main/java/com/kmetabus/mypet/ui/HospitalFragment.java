@@ -1,7 +1,11 @@
 package com.kmetabus.mypet.ui;
 
+import static com.kmetabus.mypet.MainActivity.PREFERENCES_NAME;
+import static com.kmetabus.mypet.MainActivity.PREFERENCE_KEY;
+
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -49,6 +53,9 @@ public class HospitalFragment extends Fragment implements OnListItemClickListene
         List<AnimalHospital> list = null;
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         Location location = ListViewModel.getLocation();
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        // SharedPreferences를 이용하여 사용자의 이름을 불러옴
+        String xmlnew = sharedPreferences.getString("NEW", "");
 
  System.out.println("location "+ location);
         if (location != null) {
@@ -62,7 +69,7 @@ public class HospitalFragment extends Fragment implements OnListItemClickListene
                 if(list == null || list.size() == 0 ) {
 
                     System.out.println("ListViewModel 여기왔나 "+list);
-                    list = AnimalHospitalList.getList(lat, logi, ctx2 ); // data를 가져온다
+                    list = AnimalHospitalList.getList(lat, logi, ctx2, xmlnew); // data를 가져온다
                     ListViewModel.setDataList(list);
                 }
 System.out.println("ListViewModel"+list.size());

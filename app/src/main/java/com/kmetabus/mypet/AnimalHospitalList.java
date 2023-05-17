@@ -41,7 +41,7 @@ import org.xml.sax.InputSource;
 
 public class AnimalHospitalList {
     //myLatitude 현재 기기 좌표
-    public static List<AnimalHospital>  getList( double myLatitude, double myLongitude,Context ctx ) {
+    public static List<AnimalHospital>  getList( double myLatitude, double myLongitude,Context ctx, String gbn ) {
 
         List<AnimalHospital> hospitalList = new ArrayList<>();
         try {
@@ -49,8 +49,13 @@ public class AnimalHospitalList {
             String fileUrl = "http://kmetabus.com/cdh/data/pet_hospital.xml";
             String filePath = "pet_hospital.xml";
             try {
-//System.out.println("파일 존재 0"  );
-                FileInputStream fis = ctx.openFileInput(filePath);
+                if("NEW".equals(gbn) ){ // 서버에서 새로 data를 받는다.
+//System.out.println("파일 존재 NEW"  );
+                    downloadFile(ctx, fileUrl, filePath);
+                }else{// app 내부저장소 파일에서 가져온다.
+ //System.out.println("파일 존재 내부저장소"  );
+                    FileInputStream fis = ctx.openFileInput(filePath);
+                }
                 // 파일 읽기와 관련된 코드
             } catch (FileNotFoundException e) {
 //System.out.println("파일 존재 1"  );
@@ -117,7 +122,7 @@ public class AnimalHospitalList {
                         //double[] latLng = getLatLngFromAddress(address);
                         hospital = new AnimalHospital(name, phone, address, wgs84Coordinate.y, wgs84Coordinate.x, isnew, date);
                     }else{// 신규건
-                        System.out.println("cdhgold 9"+x+" " +y );
+//System.out.println("cdhgold 9"+x+" " +y );
                         hospital = new AnimalHospital(name, phone, address, x, y, isnew, date,myLatitude, myLongitude);
                     }
                     hospitalList.add(hospital);
@@ -146,15 +151,13 @@ public class AnimalHospitalList {
                 Instant bInstant = b.getToday().toInstant();
                 LocalDate bLocalDate = bInstant.atZone(defaultZoneId).toLocalDate();
                 long bDaysDifference = Math.abs(ChronoUnit.DAYS.between(nowdt, bLocalDate));
+ //System.out.println("cdhgold 1  nowdt "+nowdt+"    "+aLocalDate+"      "+aDaysDifference+"  "+ bLocalDate+ "    "+ bDaysDifference );
+                if ((a.getIsNew()   && aDaysDifference <= 30) || ( b.getIsNew() && bDaysDifference <= 30)) {
+                    //System.out.println("cdhgold 1");
+                    return -1;
 
-                if (a.getIsNew()   && aDaysDifference <= 30) {
-                    System.out.println("cdhgold 1");
-                    return -1;
-                } else if ( b.getIsNew() && bDaysDifference <= 30) {
-                    System.out.println("cdhgold 2");
-                    return -1;
                 } else {
-                    System.out.println("cdhgold 3");
+                    //System.out.println("cdhgold 3");
                     double distanceA = a.distanceTo(myLatitude, myLongitude);
                     double distanceB = b.distanceTo(myLatitude, myLongitude);
                     return Double.compare(distanceA, distanceB);

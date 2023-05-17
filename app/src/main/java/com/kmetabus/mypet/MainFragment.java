@@ -1,5 +1,6 @@
 package com.kmetabus.mypet;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +45,9 @@ public class MainFragment extends Fragment implements OnMenuItemClickListener {
         // Navigate to the appropriate fragment based on "gbn" value
         if ("H".equals(gbn)) { // 동물병원
             navController.navigate(R.id.action_menuFragment_to_hospitalFragment);
+        } else if ("HN".equals(gbn)) { // 동물병원 신규등록
+            Intent intent = new Intent(getActivity(), HosInActivity.class);
+            startActivity(intent);
         } else if ("G".equals(gbn)) { // 동물장묘업
             navController.navigate(R.id.action_mainFragment_to_petCemeteryFragment);
         } else if ("01".equals(gbn)) { // 동물미용실
@@ -57,6 +61,7 @@ public class MainFragment extends Fragment implements OnMenuItemClickListener {
     private List<MenuItem> getMenuItems() {
         List<MenuItem> items = new ArrayList<>();
         items.add(new MenuItem("동물병원", "mypet", R.drawable.hospital, "H" ));
+        items.add(new MenuItem("", "", R.drawable.pet_new, "HN" ));
         items.add(new MenuItem("동물장묘업", "mypet",R.drawable.god,     "G"));
         items.add(new MenuItem("동물미용실", "mypet",R.drawable.mypet,   "01"));
         items.add(new MenuItem("반려동물카페", "mypet",R.drawable.mypet, "02"));

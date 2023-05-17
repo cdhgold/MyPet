@@ -5,6 +5,6 @@ import retrofit2.http.Headers;
 
 public interface ApiService {
     @Headers("Accept: application/json")
-    @GET("/pet/sse")
+    @GET("/pet/chkdt")
     Call<ServerResponse> getValue();
 }

@@ -34,5 +34,7 @@
                 android:value="" />
         </activity>
 
+        <!-- Add your new Activity here -->
+        <activity android:name=".HosInActivity" />
     </application>
 </manifest>

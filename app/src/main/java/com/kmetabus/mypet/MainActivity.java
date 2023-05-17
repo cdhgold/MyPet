@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -20,6 +21,10 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -29,12 +34,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity  {
 
+    public static final String PREFERENCES_NAME = "Chkdate";
+    public static final String PREFERENCE_KEY = "Newdate";
     private static final long DOUBLE_BACK_PRESS_INTERVAL = 2000; // 2초 간격으로 뒤로 가기 버튼을 눌렀을 때 종료
     private long lastBackPressTime = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // SharedPreferences 객체를 생성,앱이 종료되고 다시 시작되더라도 값 유지
+        SharedPreferences sharedPreferences = this.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        // SharedPreferences를 이용하여 사용자의 이름을 불러옴
+        String olddt = sharedPreferences.getString(PREFERENCE_KEY, "");
 
         Location loc = ListViewModel.getLocation();
         if(loc == null ) {
@@ -59,9 +70,32 @@ public class MainActivity extends AppCompatActivity  {
             public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
                 if (response.isSuccessful()) {
                     ServerResponse serverResponse = response.body();
-                    String newchk = serverResponse.getMessage();
-                    if("new".equals(newchk)){
-                        // 새로다운로드한다.
+                    String chkdt = serverResponse.getMessage(); // data 신규갱신일자를 가져온다.
+
+  Log.d("cdhgold", "Vchkdt: " + chkdt+ "   olddt "+olddt);
+                    if(!"".equals(chkdt)){
+                        // 새로다운로드한다. - xml에 최신변경일자를 두어, 내부저장소 파일과 비교
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        // SharedPreferences를 이용하여 , 저장
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        try {
+                            if(!"".equals(olddt)){
+                                Date serverdt = format.parse(chkdt); // 서버에서 가져온값
+                                Date clientdt = format.parse(olddt); // 앱에 저장된  가져온값
+                                if (serverdt.after(clientdt)) {// data갱신
+                                    editor.putString("NEW", "NEW");
+                                }else{
+                                    editor.putString("NEW", "");
+                                }
+                            }
+
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        editor.putString(PREFERENCE_KEY, chkdt);
+                        editor.apply();
+
 
                     }
                     Log.d("cdhgold", "Value from server: " + serverResponse.getMessage());
