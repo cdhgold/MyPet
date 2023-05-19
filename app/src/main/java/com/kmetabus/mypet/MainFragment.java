@@ -82,8 +82,8 @@ public class MainFragment extends Fragment implements OnMenuItemClickListener {
         items.add(new MenuItem("동물병원", "mypet", R.drawable.hospital, "H" ));
         items.add(new MenuItem("", "", R.drawable.pet_new, "HN" ));
         items.add(new MenuItem("동물장묘업", "mypet",R.drawable.god,     "G"));
-        items.add(new MenuItem("동물미용실", "mypet",R.drawable.mypet,   "01"));
-        items.add(new MenuItem("반려동물카페", "mypet",R.drawable.mypet, "02"));
+        items.add(new MenuItem("동물미용실", "mypet",R.drawable.pet_beauty,   "01"));
+        items.add(new MenuItem("반려동물카페", "mypet",R.drawable.pet_cafe, "02"));
         // Add more menu items as needed
         return items;
     }
