@@ -1,5 +1,5 @@
 package com.kmetabus.mypet;
-
+// 서버에서 갱신날짜를 가져온다.
 public class ServerResponse {
     String message;
 

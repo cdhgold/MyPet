@@ -1,26 +1,16 @@
 package com.kmetabus.mypet.ui;
 
 import static com.kmetabus.mypet.MainActivity.PREFERENCES_NAME;
-import static com.kmetabus.mypet.MainActivity.PREFERENCE_KEY;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,12 +21,7 @@ import android.view.ViewGroup;
 import com.kmetabus.mypet.AnimalHospital;
 import com.kmetabus.mypet.AnimalHospitalList;
 import com.kmetabus.mypet.ListViewModel;
-import com.kmetabus.mypet.MainActivity;
-import com.kmetabus.mypet.MenuAdapter;
-import com.kmetabus.mypet.MenuItem;
-import com.kmetabus.mypet.OnMenuItemClickListener;
 import com.kmetabus.mypet.R;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -51,7 +36,7 @@ public class HospitalFragment extends Fragment implements OnListItemClickListene
         //layout
         Context ctx = getActivity();
         List<AnimalHospital> list = null;
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        View view = inflater.inflate(R.layout.fragment_hospital, container, false);
         Location location = ListViewModel.getLocation();
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         // SharedPreferences를 이용하여 사용자의 이름을 불러옴
@@ -66,19 +51,19 @@ public class HospitalFragment extends Fragment implements OnListItemClickListene
                 Context ctx2 = ctx.getApplicationContext();
                 //ListViewModel listanHospotal = new ViewModelProvider(this).get(ListViewModel.class);
                 list = ListViewModel.getDataList();
+
                 if(list == null || list.size() == 0 ) {
 
                     System.out.println("ListViewModel 여기왔나 "+list);
-                    list = AnimalHospitalList.getList(lat, logi, ctx2, xmlnew); // data를 가져온다
+                    list = AnimalHospitalList.getList(lat, logi, ctx2, xmlnew, "H"); // data를 가져온다
                     ListViewModel.setDataList(list);
                 }
 System.out.println("ListViewModel"+list.size());
 
-                recyclerView = view.findViewById(R.id.recycler_view);
+                recyclerView = view.findViewById(R.id.hospital_recyclerview);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 listAdapter = new ListAdapter(getListItems(list), this);
                 recyclerView.setAdapter(listAdapter);
-
 
         }
         return view;

@@ -13,6 +13,7 @@ import java.io.StringReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -40,29 +41,34 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class AnimalHospitalList {
-    //myLatitude 현재 기기 좌표
-    public static List<AnimalHospital>  getList( double myLatitude, double myLongitude,Context ctx, String gbn ) {
+    //myLatitude 현재 기기 좌표, day: MONDAY,TUESDAY,WEDNESDAY,THURSDAY
+    public static List<AnimalHospital>  getList( double myLatitude, double myLongitude,Context ctx, String gbn ,String petgbn ) {
 
         List<AnimalHospital> hospitalList = new ArrayList<>();
         try {
         	Document document = null;
-            String fileUrl = "http://kmetabus.com/cdh/data/pet_hospital.xml";
-            String filePath = "pet_hospital.xml";
-            try {
-                if("NEW".equals(gbn) ){ // 서버에서 새로 data를 받는다.
-//System.out.println("파일 존재 NEW"  );
-                    downloadFile(ctx, fileUrl, filePath);
-                }else{// app 내부저장소 파일에서 가져온다.
- //System.out.println("파일 존재 내부저장소"  );
-                    FileInputStream fis = ctx.openFileInput(filePath);
-                }
-                // 파일 읽기와 관련된 코드
-            } catch (FileNotFoundException e) {
-//System.out.println("파일 존재 1"  );
-                // 파일이 없을 때의 처리 코드
-                downloadFile(ctx, fileUrl, filePath);
+            String filePath = "";
+            DayOfWeek ntoday = LocalDate.now().getDayOfWeek();
+            String fileUrl = DayOfWeekUrl.valueOf(ntoday.name()).getUrl(); // get file url( 월,화,수,목 )
+            if("H".equals(petgbn)){ // pet 구분 ,병원
+                filePath = "pet_hospital.xml";
+            }
+            else if("C".equals(petgbn)){ // pet 구분 , 장묘업
+                filePath = "pet_memory.xml";
+            }
+            else if("B".equals(petgbn)){ // pet 구분 , 미용
+                filePath = "pet_beauty.xml";
+            }
+            else if("CF".equals(petgbn)){ // pet 구분 , 카페
+                filePath = "pet_cafe.xml";
             }
 
+
+            if("NEW".equals(gbn) ){ // 서버에서 새로 data를 받는다.
+System.out.println("파일 존재 NEW"  );
+                downloadFile(ctx, fileUrl, filePath);
+            }
+System.out.println("파일 존재 기존파일 "  );
             //String filePath = "D:\\work\\pet_hospital.xml";
             String xml = "";
             // string.getBytest()
@@ -116,23 +122,22 @@ public class AnimalHospitalList {
                     double y = Double.parseDouble(sy);
                     boolean isnew = Boolean.parseBoolean(isNew);
                     // UTM ��ǥ�� WGS84 ��ǥ��� ��ȯ�ϴ� �ڵ尡 �ʿ��մϴ�.
-                    AnimalHospital hospital = null;
+                    AnimalHospital hospital = new AnimalHospital();
                     if(!isnew) {
                         ProjCoordinate wgs84Coordinate = convertUTMToWGS84(x, y);
                         //double[] latLng = getLatLngFromAddress(address);
-                        hospital = new AnimalHospital(name, phone, address, wgs84Coordinate.y, wgs84Coordinate.x, isnew, date);
+                        //hospital = new AnimalHospital(name, phone, address, wgs84Coordinate.y, wgs84Coordinate.x, isnew, date);
+                        hospital = AnimalHospitalPool.borrowObject(name, phone, address, wgs84Coordinate.y, wgs84Coordinate.x, isnew, date, 0, 0);
                     }else{// 신규건
-//System.out.println("cdhgold 9"+x+" " +y );
-                        hospital = new AnimalHospital(name, phone, address, x, y, isnew, date,myLatitude, myLongitude);
+
+                        hospital = AnimalHospitalPool.borrowObject(name, phone, address, x, y, isnew, date, myLatitude, myLongitude);
+                       // hospital = new AnimalHospital(name, phone, address, x, y, isnew, date,myLatitude, myLongitude);
                     }
+ System.out.println("cdhgold getName"+hospital.getName());
                     hospitalList.add(hospital);
+
                 }
             }// end for
-            // 현재좌표로 정렬
-            //hospitalList.sort(Comparator.comparingDouble(h -> h.distanceTo(myLatitude, myLongitude)));
-			// ���� ��ġ (WGS84 ��ǥ��)�� �Է��ϼ���.
-			//double currentLatitude = 37.5665; // ��: �����û ����
-			//double currentLongitude = 126.9780; // ��: �����û �浵
 
             // isNew는 30일간만 유효
             AtomicReference<Date> atodt = new AtomicReference<>();
@@ -153,11 +158,11 @@ public class AnimalHospitalList {
                 long bDaysDifference = Math.abs(ChronoUnit.DAYS.between(nowdt, bLocalDate));
  //System.out.println("cdhgold 1  nowdt "+nowdt+"    "+aLocalDate+"      "+aDaysDifference+"  "+ bLocalDate+ "    "+ bDaysDifference );
                 if ((a.getIsNew()   && aDaysDifference <= 30) || ( b.getIsNew() && bDaysDifference <= 30)) {
-                    //System.out.println("cdhgold 1");
+                    System.out.println("cdhgold 1");
                     return -1;
 
                 } else {
-                    //System.out.println("cdhgold 3");
+                    System.out.println("cdhgold 3");
                     double distanceA = a.distanceTo(myLatitude, myLongitude);
                     double distanceB = b.distanceTo(myLatitude, myLongitude);
                     return Double.compare(distanceA, distanceB);
@@ -165,24 +170,23 @@ public class AnimalHospitalList {
 
 			});
 
-	        /*
-            for (AnimalHospital hospital : hospitalList) {
-            	String addr = hospital.getAddress();
-            	Double lat = hospital.getLatitude();
-            	Double longi = hospital.getLongitude();
-                System.out.println("���� �̸�: " + hospital.getName());
-				System.out.println("��ȭ��ȣ: " + hospital.getPhone());
-				System.out.println("�ּ�: " + addr);
-				System.out.println("����: " + lat);
-				System.out.println("�浵: " + longi);
-				System.out.println("�Ÿ�: " + hospital.distanceTo(currentLatitude, currentLongitude) + " km");
-				System.out.println();
-            }
-            */
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ListViewModel.setDataList(hospitalList);
+
+        if("H".equals(petgbn)){ // pet 구분 ,병원
+            ListViewModel.setDataList(hospitalList);
+        }
+        else if("C".equals(petgbn)){ // pet 구분 , 장묘업
+            ListViewModel.setDataCList(hospitalList);
+        }
+        else if("B".equals(petgbn)){ // pet 구분 , 미용
+            ListViewModel.setDataBList(hospitalList);
+        }
+        else if("CF".equals(petgbn)){ // pet 구분 , 카페
+            ListViewModel.setDataCfList(hospitalList);
+        }
+
         return hospitalList;
     }
 	public static ProjCoordinate convertUTMToWGS84(double x, double y ) {

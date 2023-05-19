@@ -1,15 +1,18 @@
 package com.kmetabus.mypet;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,7 +47,23 @@ public class MainFragment extends Fragment implements OnMenuItemClickListener {
 
         // Navigate to the appropriate fragment based on "gbn" value
         if ("H".equals(gbn)) { // 동물병원
+            //navController.navigate(R.id.action_menuFragment_to_hospitalFragment);
+            showProgressBar();
             navController.navigate(R.id.action_menuFragment_to_hospitalFragment);
+            navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
+                @Override
+                public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
+                    if (destination.getId() == R.id.hospitalFragment) {
+                        controller.removeOnDestinationChangedListener(this);
+                        getView().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                hideProgressBar();
+                            }
+                        });
+                    }
+                }
+            });
         } else if ("HN".equals(gbn)) { // 동물병원 신규등록
             Intent intent = new Intent(getActivity(), HosInActivity.class);
             startActivity(intent);
@@ -67,5 +86,23 @@ public class MainFragment extends Fragment implements OnMenuItemClickListener {
         items.add(new MenuItem("반려동물카페", "mypet",R.drawable.mypet, "02"));
         // Add more menu items as needed
         return items;
+    }
+    public void showProgressBar() {
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.progress_layout, null);
+        view.setTag("ProgressBar");
+
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+        );
+
+        getActivity().addContentView(view, layoutParams);
+    }
+    public void hideProgressBar() {
+        View view = getActivity().getWindow().getDecorView().findViewWithTag("ProgressBar");
+        if (view != null) {
+            ((ViewGroup) view.getParent()).removeView(view);
+        }
     }
 }

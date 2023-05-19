@@ -11,16 +11,8 @@ public class AnimalHospital {
 	private double distance;
 	private boolean isNew; // 유료결재시 한달간 top에 링크
 	private Date today;
+	public AnimalHospital(){
 
-	public AnimalHospital(String name, String phone, String address, double latitude, double longitude,boolean isnew, Date today) {
-        this.name = name;
-        this.phone = phone;
-        this.address = address;
-        this.latitude = latitude;
-		this.longitude = longitude;
-		distanceTo(this.latitude,this.longitude);
-		this.isNew = isnew;
-		this.today = today;
 	}
 	public AnimalHospital(String name, String phone, String address, double latitude, double longitude,boolean isnew, Date today,double nlati, double nlogi) {
 		this.name = name;
@@ -28,34 +20,62 @@ public class AnimalHospital {
 		this.address = address;
 		this.latitude = latitude;
 		this.longitude = longitude;
-		distanceTo( nlati,nlogi);
+		if(nlati == 0){ // 이전건
+			distanceTo(this.latitude,this.longitude);
+		}else { //신규건
+			distanceTo(nlati, nlogi);
+		}
 		this.isNew = isnew;
 		this.today = today;
 	}
 	public String getName() {
 		return name;
 	}
-
 	public String getPhone() {
 		return phone;
 	}
-
 	public String getAddress() {
 		return address;
 	}
-
 	public double getLatitude() {
 		return latitude;
 	}
-
 	public double getLongitude() {
 		return longitude;
 	}
-
 	public double getDistance() {
 		return distance;
 	}
-
+	public boolean getIsNew() {
+		return isNew;
+	}
+	public Date getToday() {
+		return today;
+	}
+	public void setName(String param) {
+		this.name=param;
+	}
+	public void setPhone(String param) {
+		this.phone=param;
+	}
+	public void setAddress(String param) {
+		this.address=param;
+	}
+	public void setLatitude(double param) {
+		this.latitude=param;
+	}
+	public void setLongitude(double param) {
+		this.longitude=param;
+	}
+	public void setDistance(double param) {
+		this.distance=param;
+	}
+	public void setIsNew(boolean param) {
+		this.isNew=param;
+	}
+	public void setToday(Date param) {
+		this.today=param;
+	}
 	public double distanceTo(double lat, double lng) {
 		double earthRadius = 6371; // 지구의 평균 반지름 (km)
 		double dLat = Math.toRadians(lat - this.latitude);
@@ -67,11 +87,13 @@ public class AnimalHospital {
 		this.distance = earthRadius * c;
 		return distance;
 	}
-
-	public boolean getIsNew() {
-		return isNew;
-	}
-	public Date getToday() {
-		return today;
+	public void reset(){
+		this.name = null;
+		this.phone = null;
+		this.address = null;
+		this.latitude = 0;
+		this.longitude = 0;
+		this.distance = 0;
+		this.isNew = false;
 	}
 }

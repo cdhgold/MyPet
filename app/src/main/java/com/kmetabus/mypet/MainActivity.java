@@ -23,6 +23,8 @@ import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.Date;
 
 import retrofit2.Call;
@@ -63,8 +65,22 @@ public class MainActivity extends AppCompatActivity  {
                 .build();
 
         ApiService apiService = retrofit.create(ApiService.class);
-
-        Call<ServerResponse> call = apiService.getValue();
+        Call<ServerResponse> call = null;
+        DayOfWeek today = LocalDate.now().getDayOfWeek();
+        switch (today) {
+            case TUESDAY: //TUESDAY
+                call = apiService.getValueForTuesday(); // 장묘
+                break;
+            case WEDNESDAY:
+                call = apiService.getValueForWednesday(); // 뷰티
+                break;
+            case THURSDAY:
+                call = apiService.getValueForThursday(); // 카페
+                break;
+            default:
+                call = apiService.getValueForMonday(); // 병원
+                break;
+        }
         call.enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
