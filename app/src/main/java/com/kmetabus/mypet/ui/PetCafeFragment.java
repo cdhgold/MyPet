@@ -58,7 +58,7 @@ public class PetCafeFragment extends Fragment implements OnListItemClickListener
                 if(list == null || list.size() == 0 ) {
 
                     System.out.println("ListViewModel 여기왔나 "+list);
-                    list = AnimalHospitalList.getList(lat, logi, ctx2, xmlnew, "CF"); // data를 가져온다
+                    //list = AnimalHospitalList.getList(lat, logi, ctx2, xmlnew, "CF"); // data를 가져온다
                     ListViewModel.setDataCfList(list);
                 }
                 System.out.println("ListViewModel"+list.size());

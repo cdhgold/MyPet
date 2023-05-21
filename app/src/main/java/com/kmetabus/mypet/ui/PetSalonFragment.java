@@ -58,7 +58,7 @@ public class PetSalonFragment extends Fragment implements OnListItemClickListene
                 if(list == null || list.size() == 0 ) {
 
                     System.out.println("ListViewModel 여기왔나 "+list);
-                    list = AnimalHospitalList.getList(lat, logi, ctx2, xmlnew, "B"); // data를 가져온다
+                 //   list = AnimalHospitalList.getList(lat, logi, ctx2, xmlnew, "B"); // data를 가져온다
                     ListViewModel.setDataBList(list);
                 }
                 System.out.println("ListViewModel"+list.size());

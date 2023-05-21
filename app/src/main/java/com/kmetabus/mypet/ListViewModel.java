@@ -4,12 +4,16 @@ import android.location.Location;
 
 import androidx.lifecycle.ViewModel;
 
+import org.w3c.dom.NodeList;
+
 import java.util.List;
 /*
  xml 정보를 파싱해 , 파싱된 결과를 담아둔다. 재사용
  */
 public class ListViewModel  extends ViewModel {
     private static List<AnimalHospital> dataList; //병원
+    private static NodeList hosNl; //병원
+
     private static List<AnimalHospital> dataCList; //장묘
     private static List<AnimalHospital> dataBList; //미용
     private static List<AnimalHospital> dataCfList; //카페
@@ -18,6 +22,10 @@ public class ListViewModel  extends ViewModel {
 
     public static List<AnimalHospital> getDataList() {
         return dataList;
+    }
+
+    public static NodeList getHosNl() {
+        return hosNl;
     }
     public static List<AnimalHospital> getDataCList() {
         return dataCList;
@@ -31,6 +39,9 @@ public class ListViewModel  extends ViewModel {
 
     public static void setDataList(List<AnimalHospital> list) {
         dataList = list;
+    }
+    public static void setHosNl(NodeList hosNl) {
+        hosNl = hosNl;
     }
     public static void setDataCList(List<AnimalHospital> list) {
         dataCList = list;

@@ -44,38 +44,50 @@ public class MainFragment extends Fragment implements OnMenuItemClickListener {
     public void onMenuItemClick(MenuItem menuItem) {
         String gbn = menuItem.getGbn();
         NavController navController = Navigation.findNavController(requireView());
+        showProgressBar();
 
         // Navigate to the appropriate fragment based on "gbn" value
         if ("H".equals(gbn)) { // 동물병원
             //navController.navigate(R.id.action_menuFragment_to_hospitalFragment);
-            showProgressBar();
             navController.navigate(R.id.action_menuFragment_to_hospitalFragment);
-            navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
-                @Override
-                public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
-                    if (destination.getId() == R.id.hospitalFragment) {
-                        controller.removeOnDestinationChangedListener(this);
-                        getView().post(new Runnable() {
-                            @Override
-                            public void run() {
-                                hideProgressBar();
-                            }
-                        });
-                    }
-                }
-            });
+            progress(navController);
         } else if ("HN".equals(gbn)) { // 동물병원 신규등록
             Intent intent = new Intent(getActivity(), HosInActivity.class);
             startActivity(intent);
+            hideProgressBar();
         } else if ("G".equals(gbn)) { // 동물장묘업
             navController.navigate(R.id.action_mainFragment_to_petCemeteryFragment);
+            progress(navController);
         } else if ("01".equals(gbn)) { // 동물미용실
-            navController.navigate(R.id.beauty);
+            navController.navigate(R.id.action_beauty);
+            progress(navController);
         } else if ("02".equals(gbn)) { // 반려동물카페
-            navController.navigate(R.id.cafe);
+            navController.navigate(R.id.action_cafe);
+            progress(navController);
         }
     }
+    private void progress(NavController navController ){
+        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
+            @Override
+            public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
+                if (destination.getId() == R.id.hospitalFragment
+                        ||  destination.getId() == R.id.petCemeteryFragment
+                        ||  destination.getId() == R.id.beauty
+                        ||  destination.getId() == R.id.cafe
+                ) {
+                    controller.removeOnDestinationChangedListener(this);
+                    getView().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            hideProgressBar();
+                        }
+                    });
+                }
+            }
+        });
 
+
+    }
     // getMenuItems() 메서드 구현...
     private List<MenuItem> getMenuItems() {
         List<MenuItem> items = new ArrayList<>();

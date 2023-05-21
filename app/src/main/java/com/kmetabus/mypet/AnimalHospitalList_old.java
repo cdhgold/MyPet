@@ -2,9 +2,19 @@ package com.kmetabus.mypet;
 
 import android.content.Context;
 
+import org.osgeo.proj4j.CRSFactory;
+import org.osgeo.proj4j.CoordinateReferenceSystem;
+import org.osgeo.proj4j.CoordinateTransform;
+import org.osgeo.proj4j.CoordinateTransformFactory;
+import org.osgeo.proj4j.ProjCoordinate;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,21 +39,12 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.osgeo.proj4j.CRSFactory;
-import org.osgeo.proj4j.CoordinateReferenceSystem;
-import org.osgeo.proj4j.CoordinateTransform;
-import org.osgeo.proj4j.CoordinateTransformFactory;
-import org.osgeo.proj4j.ProjCoordinate;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
-public class AnimalHospitalList {
+public class AnimalHospitalList_old {
     //myLatitude 현재 기기 좌표, day: MONDAY,TUESDAY,WEDNESDAY,THURSDAY
-    public static NodeList getList( double myLatitude, double myLongitude,Context ctx, String gbn ,String petgbn ) {
-        NodeList nodeList = null;
+    public static List<AnimalHospital>  getList( double myLatitude, double myLongitude,Context ctx, String gbn ,String petgbn ) {
+
+        List<AnimalHospital> hospitalList = new ArrayList<>();
         try {
         	Document document = null;
             String filePath = "";
@@ -102,34 +103,24 @@ System.out.println("파일 존재 기존파일 "  );
             
             document.getDocumentElement().normalize();
 
-            nodeList = document.getElementsByTagName("row");
-            //getlistCount(nodeList,myLatitude,   myLongitude,  petgbn);
+            NodeList nodeList = document.getElementsByTagName("row");
+
             //���� (Latitude): 37.566295
             //�浵 (Longitude): 126.977945
             //double myLatitude = 37.566295; // 현위치
             //double myLongitude = 126.977945; // ���� ��ġ�� �浵
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return nodeList;
-    }
-    // scroll에 따른 100건씩 return list
-    public  static List<AnimalHospital>  getlistCount(NodeList nodeList ,double myLatitude, double myLongitude,String petgbn,int start){
-        List<AnimalHospital> hospitalList = new ArrayList<>();
-        try{
             Date date = null;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            int iend = start+0 > nodeList.getLength() ? nodeList.getLength() :  start+100 ;
-            for ( start = 0; start < iend ; start++) { //nodeList.getLength()
-                Node node = nodeList.item(start);
-System.out.println("start==> "+start);
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
                     String isNew = null;
                     String today = null;
                     String name = element.getElementsByTagName("bplcNm").item(0).getTextContent();
                     String phone = element.getElementsByTagName("siteTel").item(0).getTextContent();
-                    String address = element.getElementsByTagName("siteWhlAddr").item(0).getTextContent();
+                    String address = element.getElementsByTagName("siteWhlAddr").item(0).getTextContent(); 
                     String sx = element.getElementsByTagName("x").item(0).getTextContent().trim();
                     String sy = element.getElementsByTagName("y").item(0).getTextContent().trim();
                     if( element.getElementsByTagName("isNew").getLength() >0 )
@@ -140,7 +131,7 @@ System.out.println("start==> "+start);
                     }
 
                     if("".equals(sx) ) {
-                        continue;
+                    	continue;
                     }
                     double x = Double.parseDouble(sx);
                     double y = Double.parseDouble(sy);
@@ -155,19 +146,19 @@ System.out.println("start==> "+start);
                     }else{// 신규건
 
                         hospital = AnimalHospitalPool.borrowObject(name, phone, address, x, y, isnew, date, myLatitude, myLongitude);
-                        // hospital = new AnimalHospital(name, phone, address, x, y, isnew, date,myLatitude, myLongitude);
+                       // hospital = new AnimalHospital(name, phone, address, x, y, isnew, date,myLatitude, myLongitude);
                     }
-                    //System.out.println("cdhgold getName"+hospital.getName());
+ //System.out.println("cdhgold getName"+hospital.getName());
                     hospitalList.add(hospital);
 
                 }
             }// end for
- System.out.println("cdhgold hospitalList.size()"+hospitalList.size() );
+
             // isNew는 30일간만 유효
             AtomicReference<Date> atodt = new AtomicReference<>();
             AtomicReference<Date> btodt = new AtomicReference<>();
             LocalDate nowdt = LocalDate.now();
-            Collections.sort(hospitalList, (a, b) -> {
+			Collections.sort(hospitalList, (a, b) -> {
                 Date aDate = a.getToday();
                 Date bDate = b.getToday();
 
@@ -180,9 +171,9 @@ System.out.println("start==> "+start);
                 Instant bInstant = b.getToday().toInstant();
                 LocalDate bLocalDate = bInstant.atZone(defaultZoneId).toLocalDate();
                 long bDaysDifference = Math.abs(ChronoUnit.DAYS.between(nowdt, bLocalDate));
-                //System.out.println("cdhgold 1  nowdt "+nowdt+"    "+aLocalDate+"      "+aDaysDifference+"  "+ bLocalDate+ "    "+ bDaysDifference );
+ //System.out.println("cdhgold 1  nowdt "+nowdt+"    "+aLocalDate+"      "+aDaysDifference+"  "+ bLocalDate+ "    "+ bDaysDifference );
                 if ((a.getIsNew()   && aDaysDifference <= 30) || ( b.getIsNew() && bDaysDifference <= 30)) {
-
+                   // System.out.println("cdhgold 1");
                     return -1;
 
                 } else {
@@ -192,7 +183,7 @@ System.out.println("start==> "+start);
                     return Double.compare(distanceA, distanceB);
                 }
 
-            });
+			});
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -212,9 +203,7 @@ System.out.println("start==> "+start);
         }
 
         return hospitalList;
-
     }
-
 	public static ProjCoordinate convertUTMToWGS84(double x, double y ) {
 		String koreanCRSCode = "EPSG:5174"; // KOREA 2000 / Central Belt
         String wgs84CRSCode = "EPSG:4326"; // WGS84

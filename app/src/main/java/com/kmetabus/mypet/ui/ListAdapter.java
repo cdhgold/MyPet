@@ -21,7 +21,13 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
         this.onListItemClickListener = onListItemClickListener;
 
     }
+    public ListAdapter(  OnListItemClickListener onListItemClickListener) {
+        this.onListItemClickListener = onListItemClickListener;
 
+    }
+    public void addItems(List<ListItem> list ){
+        this.listItems.addAll(list);
+    }
     @NonNull
     @Override
     public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -45,7 +51,11 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
 
     @Override
     public int getItemCount() {
-        return listItems.size();
+        int itemsize = 0;
+        if(listItems != null){
+            itemsize =listItems.size();
+        }
+        return itemsize;
     }
 
     public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

@@ -8,15 +8,15 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.kmetabus.mypet.AnimalHospital;
 import com.kmetabus.mypet.AnimalHospitalList;
@@ -24,78 +24,57 @@ import com.kmetabus.mypet.EndlessRecyclerOnScrollListener;
 import com.kmetabus.mypet.ListViewModel;
 import com.kmetabus.mypet.R;
 
-import org.w3c.dom.NodeList;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-public class HospitalFragment extends Fragment implements OnListItemClickListener {
+/*
+원본
+ */
+public class HospitalFragment_old extends Fragment implements OnListItemClickListener {
 
     private RecyclerView recyclerView;
     private ListAdapter listAdapter;
-    private Double lat = 0.0;
-    private Double logi = 0.0;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //layout
-        View view = inflater.inflate(R.layout.fragment_hospital, container, false);
-
         Context ctx = getActivity();
-        NodeList list = null;
+        List<AnimalHospital> list = null;
+        View view = inflater.inflate(R.layout.fragment_hospital, container, false);
         Location location = ListViewModel.getLocation();
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         // SharedPreferences를 이용하여 사용자의 이름을 불러옴
         String xmlnew = sharedPreferences.getString("NEW", "");
-        System.out.println("location "+ location);
-        NodeList nl = null;
+
+ System.out.println("location "+ location);
         if (location != null) {
-            // 위치 데이터를 처리하는 로직을 구현
-            lat = location.getLatitude();
-            logi = location.getLongitude();
-            //id recycler
-            Context ctx2 = ctx.getApplicationContext();
-            //ListViewModel listanHospotal = new ViewModelProvider(this).get(ListViewModel.class);
-            nl = ListViewModel.getHosNl();
+                // 위치 데이터를 처리하는 로직을 구현
+                Double lat = location.getLatitude();
+                Double logi = location.getLongitude();
+                //id recycler
+                Context ctx2 = ctx.getApplicationContext();
+                //ListViewModel listanHospotal = new ViewModelProvider(this).get(ListViewModel.class);
+                list = ListViewModel.getDataList();
 
-            if (nl == null || nl.getLength() == 0) {
+                if(list == null || list.size() == 0 ) {
 
-                System.out.println("ListViewModel 여기왔나 " + list);
-                nl = AnimalHospitalList.getList(lat, logi, ctx2, xmlnew, "H"); // data를 가져온다
-                System.out.println("ListViewModel NodeList nl " + nl.getLength());
-                ListViewModel.setHosNl(nl);
-            }
+                    System.out.println("ListViewModel 여기왔나 "+list);
+                    //list = AnimalHospitalList.getList(lat, logi, ctx2, xmlnew, "H"); // data를 가져온다
+                    ListViewModel.setDataList(list);
+                }
+System.out.println("ListViewModel"+list.size());
+
+                recyclerView = view.findViewById(R.id.hospital_recyclerview);
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+                recyclerView.setLayoutManager(linearLayoutManager);
+                listAdapter = new ListAdapter(getListItems(list), this);
+                recyclerView.setAdapter(listAdapter);
 
         }
-        recyclerView = view.findViewById(R.id.hospital_recyclerview);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(linearLayoutManager);
-        List<AnimalHospital> hospitalList = AnimalHospitalList.getlistCount( nl ,  lat,   logi, "H",0);
- System.out.println("ListViewModel 1번쨰  " + hospitalList.size());
-        listAdapter = new ListAdapter( getListItems(hospitalList), this);
-        recyclerView.setAdapter(listAdapter);
-        recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager,listAdapter, lat,   logi, "H" ) {
-            @Override
-            public void loadMoreItems() {
-                // Here you should write your code to load more items and add them to your RecyclerView
-
-                loadItems();
-            }
-        });
-
         return view;
 
     }
 
-    public void loadItems( ) {
-        NodeList nodeList= ListViewModel.getHosNl();
-        List<AnimalHospital> hospitalList = AnimalHospitalList.getlistCount( nodeList ,  lat,   logi, "H",0);
-  System.out.println("ListViewModel hospitalList " + hospitalList.size());
-        listAdapter.addItems( getListItems(hospitalList) );
-        listAdapter.notifyDataSetChanged();
-
-    }
     @Override
     public void onListItemClick(View v, ListItem listItem) {
         Location loc = listItem.getLoc();
@@ -113,7 +92,7 @@ public class HospitalFragment extends Fragment implements OnListItemClickListene
     }
 
     // getMenuItems() 메서드 구현...
-    public static List<ListItem> getListItems(List<AnimalHospital> list) {
+    private List<ListItem> getListItems(List<AnimalHospital> list) {
         List<ListItem> items = new ArrayList<>();
         int i = 0;
         for (AnimalHospital hospital : list) {

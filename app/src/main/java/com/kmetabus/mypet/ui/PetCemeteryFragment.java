@@ -59,7 +59,7 @@ public class PetCemeteryFragment extends Fragment implements OnListItemClickList
                 if(list == null || list.size() == 0 ) {
 
                     System.out.println("ListViewModel 여기왔나 "+list);
-                    list = AnimalHospitalList.getList(lat, logi, ctx2, xmlnew, "C"); // data를 가져온다
+                   // list = AnimalHospitalList.getList(lat, logi, ctx2, xmlnew, "C"); // data를 가져온다
                     ListViewModel.setDataCList(list);
                 }
                 System.out.println("ListViewModel"+list.size());
