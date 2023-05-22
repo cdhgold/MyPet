@@ -32,29 +32,39 @@ public class EndlessRecyclerOnScrollListener extends RecyclerView.OnScrollListen
     @Override
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
-
-        NodeList nodeList= ListViewModel.getHosNl();
+        NodeList nodeList = null;
+        if("H".equals(petgbn)) {
+            nodeList = ListViewModel.getHosNl();
+        }
+        else if("C".equals(petgbn)){ // pet 구분 , 장묘업
+            nodeList = ListViewModel.getCemNl();
+        }
+        else if("B".equals(petgbn)){ // pet 구분 , 미용
+            nodeList = ListViewModel.getBeaNl();
+        }
+        else if("CF".equals(petgbn)){ // pet 구분 , 카페
+            nodeList = ListViewModel.getCfNl();
+        }
+        if(nodeList != null){
+            setLoaded();
+        }
         System.out.println("loadMoreItems   nodeList 1  "+nodeList );
         visibleItemCount = recyclerView.getChildCount();
         totalItemCount = mLinearLayoutManager.getItemCount();
         pastVisibleItems = mLinearLayoutManager.findFirstVisibleItemPosition();
-System.out.println("visibleItemCount "+visibleItemCount);
-System.out.println("totalItemCount "+totalItemCount);
-System.out.println("pastVisibleItems"+pastVisibleItems);
+ System.out.println("totalItemCount "+totalItemCount+"  visibleItemCount " + visibleItemCount+" pastVisibleItems "+ pastVisibleItems ) ;
 
-        //if (!loading) {
+        if (!loading) {
             if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
                 loading = true;
-                //Do pagination.. i.e. fetch new data
-                nodeList= ListViewModel.getHosNl();
- System.out.println("loadMoreItems   nodeList 2 "+nodeList.getLength() );
+
                 System.out.println("loadMoreItems   getLength1  "+nodeList.getLength());
                 List<AnimalHospital> hospitalList = AnimalHospitalList.getlistCount( nodeList ,  lati,   longi, petgbn,totalItemCount);
                 System.out.println("ListViewModel hospitalList2 " + hospitalList.size());
                 mAdapter.addItems(HospitalFragment.getListItems(hospitalList , totalItemCount) );
 
             }
-        //}
+        }
         recyclerView.post(new Runnable() {
             @Override
             public void run() {

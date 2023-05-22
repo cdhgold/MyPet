@@ -48,7 +48,7 @@ public class HospitalFragment extends Fragment implements OnListItemClickListene
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         // SharedPreferences를 이용하여 사용자의 이름을 불러옴
         String xmlnew = sharedPreferences.getString("NEW", "");
-        System.out.println("location "+ location);
+        //System.out.println("location "+ location);
         NodeList nl = ListViewModel.getHosNl();
         if (location != null) {
             // 위치 데이터를 처리하는 로직을 구현
@@ -58,24 +58,20 @@ public class HospitalFragment extends Fragment implements OnListItemClickListene
         //id recycler
         Context ctx2 = ctx.getApplicationContext();
         //ListViewModel listanHospotal = new ViewModelProvider(this).get(ListViewModel.class);
-
         if (nl == null || nl.getLength() == 0) {
-            System.out.println("ListViewModel 여기왔나 " + list);
             nl = AnimalHospitalList.getList(lat, logi, ctx2, xmlnew, "H"); // data를 가져온다
-            System.out.println("ListViewModel NodeList nl " + nl.getLength());
         }
         ListViewModel.setHosNl(nl);
         recyclerView = view.findViewById(R.id.hospital_recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         List<AnimalHospital> hospitalList = AnimalHospitalList.getlistCount( nl ,  lat,   logi, "H",0);
- System.out.println("ListViewModel 1번쨰  " + hospitalList.size());
         listAdapter = new ListAdapter( getListItems(hospitalList, 0), this);
         recyclerView.setAdapter(listAdapter);
         recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager,listAdapter, lat,   logi, "H" ) {
             @Override
             public void loadMoreItems() {
-                System.out.println("ListViewModel hospitalList loadMoreItems  "  );
+                //System.out.println("ListViewModel hospitalList loadMoreItems  "  );
                 loadItems();
             }
         });

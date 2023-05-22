@@ -13,6 +13,9 @@ import java.util.List;
 public class ListViewModel  extends ViewModel {
     private static List<AnimalHospital> dataList; //병원
     private static NodeList hosNl; //병원
+    private static NodeList cemNl; //장묘
+    private static NodeList beaNl; //미용
+    private static NodeList cfNl; //카페
 
     private static List<AnimalHospital> dataCList; //장묘
     private static List<AnimalHospital> dataBList; //미용
@@ -25,8 +28,19 @@ public class ListViewModel  extends ViewModel {
     }
 
     public static NodeList getHosNl() {
-        return hosNl;
+        return ListViewModel.hosNl;
     }
+    public static NodeList getCemNl() {
+        return ListViewModel.cemNl;
+    }
+    public static NodeList getBeaNl() {
+        return ListViewModel.beaNl;
+    }
+    public static NodeList getCfNl() {
+        return ListViewModel.cfNl;
+    }
+
+
     public static List<AnimalHospital> getDataCList() {
         return dataCList;
     }
@@ -40,8 +54,17 @@ public class ListViewModel  extends ViewModel {
     public static void setDataList(List<AnimalHospital> list) {
         dataList = list;
     }
-    public static void setHosNl(NodeList hosNl) {
-        ListViewModel.hosNl = hosNl;
+    public static void setHosNl(NodeList nl) {
+        ListViewModel.hosNl = nl;
+    }
+    public static void setCemNl(NodeList nl) {
+        ListViewModel.cemNl = nl;
+    }
+    public static void setBeaNl(NodeList nl) {
+        ListViewModel.beaNl = nl;
+    }
+    public static void setCfNl(NodeList nl) {
+        ListViewModel.cfNl = nl;
     }
     public static void setDataCList(List<AnimalHospital> list) {
         dataCList = list;

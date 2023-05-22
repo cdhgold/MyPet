@@ -74,14 +74,14 @@ System.out.println("파일 존재 기존파일 "  );
             try {
                 fis = ctx.openFileInput(filePath);
             }catch(Exception e){
-                System.out.println("파일 존재 FileInputStreamn null  "  );
+                //System.out.println("파일 존재 FileInputStreamn null  "  );
                 fileUrl = DayOfWeekUrl.valueOf(petgbn).getUrl(); // get file url( 월,화,수,목 )
                 downloadFile(ctx, fileUrl, filePath);
                 fis = ctx.openFileInput(filePath);
-                System.out.println("파일 존재 FileInputStreamn  fis  "  + fis);
+                //System.out.println("파일 존재 FileInputStreamn  fis  "  + fis);
             }
             int size = fis.available();
-            System.out.println("파일 존재 FileInputStreamn   size "+size  );
+            //System.out.println("파일 존재 FileInputStreamn   size "+size  );
             byte[] buffer = new byte[1024];
             //fis.read(buffer); // size가 클경우 outofmemory 발생
             int bytesRead;
@@ -124,7 +124,7 @@ System.out.println("파일 존재 기존파일 "  );
             int is = start;
             if(start > iend )start = iend;
 System.out.println("start==> iend"+iend + "  start  "+start);
-            for ( start = is ; start <= Math.min(iend, nodeList.getLength() - 1) ; start++) { //nodeList.getLength()
+            for ( start = is ; start <= iend - 1  ; start++) { //nodeList.getLength()
                 Node node = nodeList.item(start);
                 //if(node == null)continue;
 System.out.println("start==> "+start);
@@ -169,7 +169,7 @@ System.out.println("start==> "+start);
                 }
             }// end for
 
- System.out.println("cdhgold hospitalList.size()"+hospitalList.size() );
+ //System.out.println("cdhgold hospitalList.size()"+hospitalList.size() );
             // isNew는 30일간만 유효
             AtomicReference<Date> atodt = new AtomicReference<>();
             AtomicReference<Date> btodt = new AtomicReference<>();
