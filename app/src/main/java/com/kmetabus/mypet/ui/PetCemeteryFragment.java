@@ -55,8 +55,8 @@ public class PetCemeteryFragment extends Fragment implements OnListItemClickList
 //System.out.println("location "+ location);
             if (location != null) {
                 // 위치 데이터를 처리하는 로직을 구현
-                Double lat = location.getLatitude();
-                Double logi = location.getLongitude();
+                lat = location.getLatitude();
+                logi = location.getLongitude();
             }
             //id recycler
             Context ctx2 = ctx.getApplicationContext();
