@@ -119,9 +119,14 @@ System.out.println("파일 존재 기존파일 "  );
         try{
             Date date = null;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            int iend = start+0 > nodeList.getLength() ? nodeList.getLength() :  start+100 ;
-            for ( start = 0; start < iend ; start++) { //nodeList.getLength()
+            int iend = start > nodeList.getLength() ? nodeList.getLength() :  start+100 ;
+            if(iend > nodeList.getLength())iend = nodeList.getLength() ;
+            int is = start;
+            if(start > iend )start = iend;
+System.out.println("start==> iend"+iend + "  start  "+start);
+            for ( start = is ; start <= Math.min(iend, nodeList.getLength() - 1) ; start++) { //nodeList.getLength()
                 Node node = nodeList.item(start);
+                //if(node == null)continue;
 System.out.println("start==> "+start);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
@@ -138,9 +143,11 @@ System.out.println("start==> "+start);
                         today = element.getElementsByTagName("updateDt").item(0).getTextContent().trim();
                         date = dateFormat.parse(today);
                     }
-
                     if("".equals(sx) ) {
-                        continue;
+                        sx = "0";
+                    }
+                    if("".equals(sy) ) {
+                        sy = "0";
                     }
                     double x = Double.parseDouble(sx);
                     double y = Double.parseDouble(sy);
@@ -159,9 +166,9 @@ System.out.println("start==> "+start);
                     }
                     //System.out.println("cdhgold getName"+hospital.getName());
                     hospitalList.add(hospital);
-
                 }
             }// end for
+
  System.out.println("cdhgold hospitalList.size()"+hospitalList.size() );
             // isNew는 30일간만 유효
             AtomicReference<Date> atodt = new AtomicReference<>();

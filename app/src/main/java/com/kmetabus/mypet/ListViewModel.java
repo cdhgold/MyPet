@@ -41,7 +41,7 @@ public class ListViewModel  extends ViewModel {
         dataList = list;
     }
     public static void setHosNl(NodeList hosNl) {
-        hosNl = hosNl;
+        ListViewModel.hosNl = hosNl;
     }
     public static void setDataCList(List<AnimalHospital> list) {
         dataCList = list;

@@ -33,6 +33,8 @@ public class EndlessRecyclerOnScrollListener extends RecyclerView.OnScrollListen
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
 
+        NodeList nodeList= ListViewModel.getHosNl();
+        System.out.println("loadMoreItems   nodeList 1  "+nodeList );
         visibleItemCount = recyclerView.getChildCount();
         totalItemCount = mLinearLayoutManager.getItemCount();
         pastVisibleItems = mLinearLayoutManager.findFirstVisibleItemPosition();
@@ -44,18 +46,26 @@ System.out.println("pastVisibleItems"+pastVisibleItems);
             if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
                 loading = true;
                 //Do pagination.. i.e. fetch new data
-                loadMoreItems();
+                nodeList= ListViewModel.getHosNl();
+ System.out.println("loadMoreItems   nodeList 2 "+nodeList.getLength() );
+                System.out.println("loadMoreItems   getLength1  "+nodeList.getLength());
+                List<AnimalHospital> hospitalList = AnimalHospitalList.getlistCount( nodeList ,  lati,   longi, petgbn,totalItemCount);
+                System.out.println("ListViewModel hospitalList2 " + hospitalList.size());
+                mAdapter.addItems(HospitalFragment.getListItems(hospitalList , totalItemCount) );
+
             }
         //}
+        recyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+
     }
 
     public void loadMoreItems(){
-        NodeList nodeList= ListViewModel.getHosNl();
-  System.out.println("loadMoreItems   getLength  "+nodeList.getLength());
-        List<AnimalHospital> hospitalList = AnimalHospitalList.getlistCount( nodeList ,  lati,   longi, petgbn,totalItemCount);
-        System.out.println("ListViewModel hospitalList " + hospitalList.size());
-        mAdapter.addItems(HospitalFragment.getListItems(hospitalList) );
-        mAdapter.notifyDataSetChanged();
+
     }
 
     public void setLoaded() {
