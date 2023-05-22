@@ -48,7 +48,7 @@ public class EndlessRecyclerOnScrollListener extends RecyclerView.OnScrollListen
         if(nodeList != null){
             setLoaded();
         }
-        System.out.println("loadMoreItems   nodeList 1  "+nodeList );
+        System.out.println("loadMoreItems   nodeList 1  "+nodeList +" petgbn "+petgbn);
         visibleItemCount = recyclerView.getChildCount();
         totalItemCount = mLinearLayoutManager.getItemCount();
         pastVisibleItems = mLinearLayoutManager.findFirstVisibleItemPosition();

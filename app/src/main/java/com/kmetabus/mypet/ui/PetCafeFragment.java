@@ -70,7 +70,7 @@ public class PetCafeFragment extends Fragment implements OnListItemClickListener
             List<AnimalHospital> hospitalList = AnimalHospitalList.getlistCount( nl ,  lat,   logi, "C",0);
             listAdapter = new ListAdapter( getListItems(hospitalList, 0), this);
             recyclerView.setAdapter(listAdapter);
-            recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager,listAdapter, lat,   logi, "H" ) {
+            recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager,listAdapter, lat,   logi, "CF" ) {
                 @Override
                 public void loadMoreItems() {
 
