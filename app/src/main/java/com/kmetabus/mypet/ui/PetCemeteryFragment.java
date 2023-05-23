@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -66,12 +67,13 @@ public class PetCemeteryFragment extends Fragment implements OnListItemClickList
 System.out.println("nl length "+ nl.getLength() );
             ListViewModel.setCemNl(nl);
             recyclerView = view.findViewById(R.id.cemetery_recyclerview);
+            ProgressBar progressBar = view.findViewById(R.id.progress_bar);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
             recyclerView.setLayoutManager(linearLayoutManager);
             List<AnimalHospital> hospitalList = AnimalHospitalList.getlistCount( nl ,  lat,   logi, "C",0);
             listAdapter = new ListAdapter( getListItems(hospitalList, 0), this);
             recyclerView.setAdapter(listAdapter);
-            recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager,listAdapter, lat,   logi, "C" ) {
+            recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager,listAdapter, lat,   logi, "C" ,progressBar) {
                 @Override
                 public void loadMoreItems() {
 

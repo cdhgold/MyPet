@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.kmetabus.mypet.AnimalHospital;
 import com.kmetabus.mypet.AnimalHospitalList;
@@ -63,12 +64,13 @@ public class HospitalFragment extends Fragment implements OnListItemClickListene
         }
         ListViewModel.setHosNl(nl);
         recyclerView = view.findViewById(R.id.hospital_recyclerview);
+        ProgressBar progressBar = view.findViewById(R.id.progress_bar);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         List<AnimalHospital> hospitalList = AnimalHospitalList.getlistCount( nl ,  lat,   logi, "H",0);
         listAdapter = new ListAdapter( getListItems(hospitalList, 0), this);
         recyclerView.setAdapter(listAdapter);
-        recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager,listAdapter, lat,   logi, "H" ) {
+        recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager,listAdapter, lat,   logi, "H" ,progressBar) {
             @Override
             public void loadMoreItems() {
                 //System.out.println("ListViewModel hospitalList loadMoreItems  "  );
