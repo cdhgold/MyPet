@@ -105,25 +105,35 @@ public class AnimalHospitalList {
             List<Node> nodes = new ArrayList<>();
 
             for (int i = 0; i < nodeList.getLength(); i++) {
-                String isNew = null;
+                String isNew = null,chkempty = "";
                 Node node = nodeList.item(i);
                 Double distance1 = 0.0 , lat1 = 0.0 , lon1 = 0.0;
                 // Document를 얻는다
                 Document doc1 = node.getOwnerDocument();
                 // dist라는 새 Element를 생성한다
                 Element distElement1 = doc1.createElement("dist");
-                if( (((Element) node).getElementsByTagName("x").item(0).getTextContent().trim()).length() >0 )
+                if( (((Element) node).getElementsByTagName("x").item(0).getTextContent().trim()).length() >0 ) {
                     lat1 = Double.parseDouble(((Element) node).getElementsByTagName("x").item(0).getTextContent().trim());
-                if( (((Element) node).getElementsByTagName("y").item(0).getTextContent().trim()).length() >0 )
+                }else{
+                    chkempty = "Y"; // 좌표가 없음
+                }
+                if( (((Element) node).getElementsByTagName("y").item(0).getTextContent().trim()).length() >0 ) {
                     lon1 = Double.parseDouble(((Element) node).getElementsByTagName("y").item(0).getTextContent().trim());
+                }else{
+                    chkempty = "Y";
+                }
                 if( ((Element) node).getElementsByTagName("isNew").getLength() >0 )
                     isNew = ((Element) node).getElementsByTagName("isNew").item(0).getTextContent().trim();
 
                 if(Boolean.parseBoolean(isNew)){ // 신규건 위도,경도
                     distance1 = haversineDistance(myLatitude, myLongitude, lat1, lon1);
                 }else{
-                    ProjCoordinate wgs84Coordinate1 = convertUTMToWGS84(lat1, lon1);
-                    distance1 = haversineDistance(myLatitude, myLongitude, wgs84Coordinate1.y, wgs84Coordinate1.x);
+                    if("".equals(chkempty)) {
+                        ProjCoordinate wgs84Coordinate1 = convertUTMToWGS84(lat1, lon1);
+                        distance1 = haversineDistance(myLatitude, myLongitude, wgs84Coordinate1.y, wgs84Coordinate1.x);
+                    }else{
+                        distance1 = 0.0;
+                    }
                 }
                 distElement1.setTextContent(String.valueOf(distance1));
                 // node1에 dist Element를 추가한다
@@ -132,7 +142,7 @@ public class AnimalHospitalList {
             }
 
 
-System.out.println("nodes size "+nodes.size());
+//System.out.println("nodes size "+nodes.size());
 
             // 노드를 현재 위치로부터의 거리에 따라 정렬합니다.
             //지구 위의 좌표(경도와 위도)를 사용한다면, 거리 계산에는 "하버사인 공식"을 사용
@@ -168,7 +178,7 @@ System.out.println("nodes size "+nodes.size());
                 Node node = sortedNodeList.item(i);
                 Element element = (Element) node;
                 String address = element.getElementsByTagName("siteWhlAddr").item(0).getTextContent();
-                System.out.println("AnimalHospialList  i " +i+"= "+ address);
+ //System.out.println("AnimalHospialList  i " +i+"= "+ address);
             }
 
         } catch (Exception e) {
@@ -234,7 +244,7 @@ System.out.println("nodes size "+nodes.size());
                     double y = Double.parseDouble(sy);
                     boolean isnew = Boolean.parseBoolean(isNew);
                     AnimalHospital hospital = new AnimalHospital();
- System.out.println("cdhgold dist==>"+dist);
+ //System.out.println("cdhgold dist==>"+dist);
                     hospital = AnimalHospitalPool.borrowObject(name, phone, address, Double.parseDouble(dist) , isnew, date, 0, 0);
 
                     hospitalList.add(hospital);
