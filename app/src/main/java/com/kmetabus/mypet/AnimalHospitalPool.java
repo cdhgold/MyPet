@@ -7,17 +7,13 @@ public class AnimalHospitalPool {
     private static ConcurrentLinkedQueue<AnimalHospital> pool = new ConcurrentLinkedQueue<>();
 
     public static AnimalHospital borrowObject(String name, String phone, String address,
-                                              double x, double y, boolean isnew,
+                                              double distance, boolean isnew,
                                               Date date, double latitude, double longitude) {
         AnimalHospital hospital = pool.poll();
 
         if (hospital == null) {
-            if(!isnew){
-                hospital = new AnimalHospital(name, phone, address, x, y, isnew, date,0,0);
-            }else{
-                //신규건
-                hospital = new AnimalHospital(name, phone, address, x, y, isnew, date, latitude, longitude);
-            }
+            hospital = new AnimalHospital(name, phone, address, distance, isnew, date,0,0);
+
 
         } else {
             hospital.setName(name);
@@ -25,17 +21,8 @@ public class AnimalHospitalPool {
             hospital.setAddress(address);
             hospital.setIsNew(isnew);
             hospital.setToday(date);
+            hospital.setDistance(distance);
 
-            if(!isnew){
-                hospital.distanceTo(x,y);
-                hospital.setLatitude(x);
-                hospital.setLongitude(y);
-            }else{
-                //신규
-                hospital.distanceTo(latitude,longitude);
-                hospital.setLatitude(x);
-                hospital.setLongitude(y);
-            }
         }
         return hospital;
     }

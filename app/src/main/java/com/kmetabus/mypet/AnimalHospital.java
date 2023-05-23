@@ -14,17 +14,14 @@ public class AnimalHospital {
 	public AnimalHospital(){
 
 	}
-	public AnimalHospital(String name, String phone, String address, double latitude, double longitude,boolean isnew, Date today,double nlati, double nlogi) {
+	public AnimalHospital(String name, String phone, String address, double distance,boolean isnew, Date today,double nlati, double nlogi) {
 		this.name = name;
 		this.phone = phone;
 		this.address = address;
+		this.distance = distance;
 		this.latitude = latitude;
 		this.longitude = longitude;
-		if(nlati == 0){ // 이전건
-			distanceTo(this.latitude,this.longitude);
-		}else { //신규건
-			distanceTo(nlati, nlogi);
-		}
+
 		this.isNew = isnew;
 		this.today = today;
 	}

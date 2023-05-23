@@ -20,6 +20,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -44,11 +45,11 @@ public class AnimalHospitalList {
     //myLatitude 현재 기기 좌표, day: MONDAY,TUESDAY,WEDNESDAY,THURSDAY
     public static NodeList getList( double myLatitude, double myLongitude,Context ctx, String gbn ,String petgbn ) {
         NodeList nodeList = null;
+        NodeList sortedNodeList = null;
         try {
         	Document document = null;
             String filePath = "";
-            DayOfWeek ntoday = LocalDate.now().getDayOfWeek();
-            String fileUrl = DayOfWeekUrl.valueOf(ntoday.name()).getUrl(); // get file url( 월,화,수,목 )
+            String fileUrl = DayOfWeekUrl.valueOf(petgbn).getUrl(); // get file url
             if("H".equals(petgbn)){ // pet 구분 ,병원
                 filePath = "pet_hospital.xml";
             }
@@ -75,7 +76,6 @@ public class AnimalHospitalList {
                 fis = ctx.openFileInput(filePath);
             }catch(Exception e){
                 ////System.out.println("파일 존재 FileInputStreamn null  "  );
-                fileUrl = DayOfWeekUrl.valueOf(petgbn).getUrl(); // get file url( 월,화,수,목 )
                 downloadFile(ctx, fileUrl, filePath);
                 fis = ctx.openFileInput(filePath);
                 ////System.out.println("파일 존재 FileInputStreamn  fis  "  + fis);
@@ -92,7 +92,6 @@ public class AnimalHospitalList {
             }
             xml = sb.toString();
            // xml = new String(buffer, StandardCharsets.UTF_8);
-////System.out.println("xml"+xml);
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             //Document document = builder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
@@ -103,15 +102,96 @@ public class AnimalHospitalList {
             document.getDocumentElement().normalize();
 
             nodeList = document.getElementsByTagName("row");
-            //getlistCount(nodeList,myLatitude,   myLongitude,  petgbn);
-            //���� (Latitude): 37.566295
-            //�浵 (Longitude): 126.977945
-            //double myLatitude = 37.566295; // 현위치
-            //double myLongitude = 126.977945; // ���� ��ġ�� �浵
+            List<Node> nodes = new ArrayList<>();
+
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                String isNew = null;
+                Node node = nodeList.item(i);
+                Double distance1 = 0.0 , lat1 = 0.0 , lon1 = 0.0;
+                // Document를 얻는다
+                Document doc1 = node.getOwnerDocument();
+                // dist라는 새 Element를 생성한다
+                Element distElement1 = doc1.createElement("dist");
+                if( (((Element) node).getElementsByTagName("x").item(0).getTextContent().trim()).length() >0 )
+                    lat1 = Double.parseDouble(((Element) node).getElementsByTagName("x").item(0).getTextContent().trim());
+                if( (((Element) node).getElementsByTagName("y").item(0).getTextContent().trim()).length() >0 )
+                    lon1 = Double.parseDouble(((Element) node).getElementsByTagName("y").item(0).getTextContent().trim());
+                if( ((Element) node).getElementsByTagName("isNew").getLength() >0 )
+                    isNew = ((Element) node).getElementsByTagName("isNew").item(0).getTextContent().trim();
+
+                if(Boolean.parseBoolean(isNew)){ // 신규건 위도,경도
+                    distance1 = haversineDistance(myLatitude, myLongitude, lat1, lon1);
+                }else{
+                    ProjCoordinate wgs84Coordinate1 = convertUTMToWGS84(lat1, lon1);
+                    distance1 = haversineDistance(myLatitude, myLongitude, wgs84Coordinate1.y, wgs84Coordinate1.x);
+                }
+                distElement1.setTextContent(String.valueOf(distance1));
+                // node1에 dist Element를 추가한다
+                node.appendChild(distElement1);
+                nodes.add(node);
+            }
+
+
+System.out.println("nodes size "+nodes.size());
+
+            // 노드를 현재 위치로부터의 거리에 따라 정렬합니다.
+            //지구 위의 좌표(경도와 위도)를 사용한다면, 거리 계산에는 "하버사인 공식"을 사용
+            Collections.sort(nodes, new Comparator<Node>() {
+                @Override
+                public int compare(Node node1, Node node2) {
+                    String isNew1 = null, isNew2 = null;
+
+                    String dist1 = ((Element) node1).getElementsByTagName("dist").item(0).getTextContent().trim();
+                    String dist2 = ((Element) node2).getElementsByTagName("dist").item(0).getTextContent().trim();
+                    if( ((Element) node1).getElementsByTagName("isNew").getLength() >0 )
+                        isNew1 = ((Element) node1).getElementsByTagName("isNew").item(0).getTextContent().trim();
+                    if( ((Element) node2).getElementsByTagName("isNew").getLength() >0 )
+                        isNew2 = ((Element) node2).getElementsByTagName("isNew").item(0).getTextContent().trim();
+                    if ("".equals(dist1) && "".equals(dist2)) {
+                        // 둘 다 좌표를 가지고 있지 않음 - 같다고 간주
+                        return 0;
+                    } else if (Boolean.parseBoolean(isNew1) && !Boolean.parseBoolean(isNew2)) {
+                        // node1이 새 노드이고 node2가 새 노드가 아닌 경우, node1을 앞으로 보냅니다.
+                        return -1;
+                    } else if (!Boolean.parseBoolean(isNew1) && Boolean.parseBoolean(isNew2)) {
+                        // node2가 새 노드이고 node1이 새 노드가 아닌 경우, node2를 앞으로 보냅니다.
+                        return 1;
+                    }
+
+
+                    return Double.compare(Double.parseDouble(dist1), Double.parseDouble(dist2));
+                }
+            });
+
+            sortedNodeList = new ModifiableNodeList(nodes);
+            for(int i=0 ;i< sortedNodeList.getLength();i++) {
+                Node node = sortedNodeList.item(i);
+                Element element = (Element) node;
+                String address = element.getElementsByTagName("siteWhlAddr").item(0).getTextContent();
+                System.out.println("AnimalHospialList  i " +i+"= "+ address);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return nodeList;
+
+        return sortedNodeList;
+    }
+    public static double haversineDistance(double lat1, double lon1, double lat2, double lon2) {
+        // 지구의 반지름(km)
+        final int R = 6371;
+
+        // 위도와 경도를 라디안 단위로 변환
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+
+        // 하버사인 공식
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLon/2) * Math.sin(dLon/2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+        return R * c;
     }
     // scroll에 따른 100건씩 return list
     public  static List<AnimalHospital>  getlistCount(NodeList nodeList ,double myLatitude, double myLongitude,String petgbn,int start){
@@ -133,6 +213,7 @@ public class AnimalHospitalList {
                     String isNew = null;
                     String today = null;
                     String name = element.getElementsByTagName("bplcNm").item(0).getTextContent();
+                    String dist = element.getElementsByTagName("dist").item(0).getTextContent();
                     String phone = element.getElementsByTagName("siteTel").item(0).getTextContent();
                     String address = element.getElementsByTagName("siteWhlAddr").item(0).getTextContent();
                     String sx = element.getElementsByTagName("x").item(0).getTextContent().trim();
@@ -152,19 +233,10 @@ public class AnimalHospitalList {
                     double x = Double.parseDouble(sx);
                     double y = Double.parseDouble(sy);
                     boolean isnew = Boolean.parseBoolean(isNew);
-                    // UTM ��ǥ�� WGS84 ��ǥ��� ��ȯ�ϴ� �ڵ尡 �ʿ��մϴ�.
                     AnimalHospital hospital = new AnimalHospital();
-                    if(!isnew) {
-                        ProjCoordinate wgs84Coordinate = convertUTMToWGS84(x, y);
-                        //double[] latLng = getLatLngFromAddress(address);
-                        //hospital = new AnimalHospital(name, phone, address, wgs84Coordinate.y, wgs84Coordinate.x, isnew, date);
-                        hospital = AnimalHospitalPool.borrowObject(name, phone, address, wgs84Coordinate.y, wgs84Coordinate.x, isnew, date, 0, 0);
-                    }else{// 신규건
+ System.out.println("cdhgold dist==>"+dist);
+                    hospital = AnimalHospitalPool.borrowObject(name, phone, address, Double.parseDouble(dist) , isnew, date, 0, 0);
 
-                        hospital = AnimalHospitalPool.borrowObject(name, phone, address, x, y, isnew, date, myLatitude, myLongitude);
-                        // hospital = new AnimalHospital(name, phone, address, x, y, isnew, date,myLatitude, myLongitude);
-                    }
-                    ////System.out.println("cdhgold getName"+hospital.getName());
                     hospitalList.add(hospital);
                 }
             }// end for
@@ -174,6 +246,7 @@ public class AnimalHospitalList {
             AtomicReference<Date> atodt = new AtomicReference<>();
             AtomicReference<Date> btodt = new AtomicReference<>();
             LocalDate nowdt = LocalDate.now();
+            /*
             Collections.sort(hospitalList, (a, b) -> {
                 Date aDate = a.getToday();
                 Date bDate = b.getToday();
@@ -200,22 +273,9 @@ public class AnimalHospitalList {
                 }
 
             });
-
+            */
         } catch (Exception e) {
             e.printStackTrace();
-        }
-
-        if("H".equals(petgbn)){ // pet 구분 ,병원
-            ListViewModel.setDataList(hospitalList);
-        }
-        else if("C".equals(petgbn)){ // pet 구분 , 장묘업
-            ListViewModel.setDataCList(hospitalList);
-        }
-        else if("B".equals(petgbn)){ // pet 구분 , 미용
-            ListViewModel.setDataBList(hospitalList);
-        }
-        else if("CF".equals(petgbn)){ // pet 구분 , 카페
-            ListViewModel.setDataCfList(hospitalList);
         }
 
         return hospitalList;

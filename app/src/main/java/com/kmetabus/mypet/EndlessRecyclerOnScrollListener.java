@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.kmetabus.mypet.ui.HospitalFragment;
 import com.kmetabus.mypet.ui.ListAdapter;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.List;
@@ -55,7 +57,14 @@ public class EndlessRecyclerOnScrollListener extends RecyclerView.OnScrollListen
         if(nodeList != null){
             setLoaded();
         }
-        //System.out.println("loadMoreItems   nodeList 1  "+nodeList +" petgbn "+petgbn);
+        for(int i=0 ;i< nodeList.getLength();i++) {
+            Node node = nodeList.item(i);
+            Element element = (Element) node;
+            String address = element.getElementsByTagName("siteWhlAddr").item(0).getTextContent();
+  System.out.println("EndlessRecyclerOnScrollListener  i " +i+"= "+ address);
+        }
+
+        System.out.println("EndlessRecyclerOnScrollListener   nodeList 1  "+nodeList.getLength() +" petgbn "+petgbn);
         visibleItemCount = recyclerView.getChildCount();
         totalItemCount = mLinearLayoutManager.getItemCount();
         pastVisibleItems = mLinearLayoutManager.findFirstVisibleItemPosition();

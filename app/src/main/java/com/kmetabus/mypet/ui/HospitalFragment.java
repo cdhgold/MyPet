@@ -25,6 +25,7 @@ import com.kmetabus.mypet.EndlessRecyclerOnScrollListener;
 import com.kmetabus.mypet.ListViewModel;
 import com.kmetabus.mypet.R;
 
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
@@ -62,6 +63,7 @@ public class HospitalFragment extends Fragment implements OnListItemClickListene
         if (nl == null || nl.getLength() == 0) {
             nl = AnimalHospitalList.getList(lat, logi, ctx2, xmlnew, "H"); // data를 가져온다
         }
+
         ListViewModel.setHosNl(nl);
         recyclerView = view.findViewById(R.id.hospital_recyclerview);
         ProgressBar progressBar = view.findViewById(R.id.progress_bar);

@@ -142,10 +142,10 @@ System.out.println("파일 존재 기존파일 "  );
                         ProjCoordinate wgs84Coordinate = convertUTMToWGS84(x, y);
                         //double[] latLng = getLatLngFromAddress(address);
                         //hospital = new AnimalHospital(name, phone, address, wgs84Coordinate.y, wgs84Coordinate.x, isnew, date);
-                        hospital = AnimalHospitalPool.borrowObject(name, phone, address, wgs84Coordinate.y, wgs84Coordinate.x, isnew, date, 0, 0);
+                        //hospital = AnimalHospitalPool.borrowObject(name, phone, address, wgs84Coordinate.y, wgs84Coordinate.x, isnew, date, 0, 0);
                     }else{// 신규건
 
-                        hospital = AnimalHospitalPool.borrowObject(name, phone, address, x, y, isnew, date, myLatitude, myLongitude);
+                        //hospital = AnimalHospitalPool.borrowObject(name, phone, address, x, y, isnew, date, myLatitude, myLongitude);
                        // hospital = new AnimalHospital(name, phone, address, x, y, isnew, date,myLatitude, myLongitude);
                     }
  //System.out.println("cdhgold getName"+hospital.getName());
