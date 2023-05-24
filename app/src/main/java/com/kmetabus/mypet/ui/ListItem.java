@@ -23,7 +23,7 @@ public class ListItem {
         this.loc = loc;
         this.isNew = isnew;
         this.today = today;
-
+System.out.println("dist ==> "+col4);
 
     }
 

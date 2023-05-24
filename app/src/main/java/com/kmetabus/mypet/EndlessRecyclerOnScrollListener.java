@@ -57,14 +57,6 @@ public class EndlessRecyclerOnScrollListener extends RecyclerView.OnScrollListen
         if(nodeList != null){
             setLoaded();
         }
-        for(int i=0 ;i< nodeList.getLength();i++) {
-            Node node = nodeList.item(i);
-            Element element = (Element) node;
-            String address = element.getElementsByTagName("siteWhlAddr").item(0).getTextContent();
-  System.out.println("EndlessRecyclerOnScrollListener  i " +i+"= "+ address);
-        }
-
-        System.out.println("EndlessRecyclerOnScrollListener   nodeList 1  "+nodeList.getLength() +" petgbn "+petgbn);
         visibleItemCount = recyclerView.getChildCount();
         totalItemCount = mLinearLayoutManager.getItemCount();
         pastVisibleItems = mLinearLayoutManager.findFirstVisibleItemPosition();

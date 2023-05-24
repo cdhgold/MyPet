@@ -122,9 +122,10 @@ public class AnimalHospitalList {
                 }else{
                     chkempty = "Y";
                 }
-                if( ((Element) node).getElementsByTagName("isNew").getLength() >0 )
+                if( ((Element) node).getElementsByTagName("isNew").getLength() >0 ) {
                     isNew = ((Element) node).getElementsByTagName("isNew").item(0).getTextContent().trim();
-
+                }
+//System.out.println("AnimalHospialList  isNew " + Boolean.parseBoolean(isNew)+ " chkempty "+chkempty);
                 if(Boolean.parseBoolean(isNew)){ // 신규건 위도,경도
                     distance1 = haversineDistance(myLatitude, myLongitude, lat1, lon1);
                 }else{
@@ -136,13 +137,11 @@ public class AnimalHospitalList {
                     }
                 }
                 distElement1.setTextContent(String.valueOf(distance1));
+ //System.out.println("AnimalHospialList  distance1 " + String.valueOf(distance1));
                 // node1에 dist Element를 추가한다
                 node.appendChild(distElement1);
                 nodes.add(node);
             }
-
-
-//System.out.println("nodes size "+nodes.size());
 
             // 노드를 현재 위치로부터의 거리에 따라 정렬합니다.
             //지구 위의 좌표(경도와 위도)를 사용한다면, 거리 계산에는 "하버사인 공식"을 사용
@@ -150,16 +149,20 @@ public class AnimalHospitalList {
                 @Override
                 public int compare(Node node1, Node node2) {
                     String isNew1 = null, isNew2 = null;
-
+// 첫 번째 객체가 두 번째 객체보다 작으면 음의 정수, 같으면 0, 크면 양의 정수
                     String dist1 = ((Element) node1).getElementsByTagName("dist").item(0).getTextContent().trim();
                     String dist2 = ((Element) node2).getElementsByTagName("dist").item(0).getTextContent().trim();
-                    if( ((Element) node1).getElementsByTagName("isNew").getLength() >0 )
+//System.out.println("nodes dist1 "+ dist1+ " dist2 "+dist2);
+                    if( ((Element) node1).getElementsByTagName("isNew").getLength() >0 ) {
                         isNew1 = ((Element) node1).getElementsByTagName("isNew").item(0).getTextContent().trim();
-                    if( ((Element) node2).getElementsByTagName("isNew").getLength() >0 )
+                    }
+                    if( ((Element) node2).getElementsByTagName("isNew").getLength() >0 ) {
                         isNew2 = ((Element) node2).getElementsByTagName("isNew").item(0).getTextContent().trim();
-                    if ("".equals(dist1) && "".equals(dist2)) {
-                        // 둘 다 좌표를 가지고 있지 않음 - 같다고 간주
-                        return 0;
+                    }
+                    if ("0.0".equals(dist1) || "".equals(dist1)) {
+                        dist1 = "500";
+                    } else if ("0.0".equals(dist2) || "".equals(dist2)) {
+                        dist2 = "500";
                     } else if (Boolean.parseBoolean(isNew1) && !Boolean.parseBoolean(isNew2)) {
                         // node1이 새 노드이고 node2가 새 노드가 아닌 경우, node1을 앞으로 보냅니다.
                         return -1;
@@ -174,12 +177,7 @@ public class AnimalHospitalList {
             });
 
             sortedNodeList = new ModifiableNodeList(nodes);
-            for(int i=0 ;i< sortedNodeList.getLength();i++) {
-                Node node = sortedNodeList.item(i);
-                Element element = (Element) node;
-                String address = element.getElementsByTagName("siteWhlAddr").item(0).getTextContent();
- //System.out.println("AnimalHospialList  i " +i+"= "+ address);
-            }
+
 
         } catch (Exception e) {
             e.printStackTrace();
