@@ -65,24 +65,24 @@ public class AnimalHospitalList_old {
 
 
             if("NEW".equals(gbn) ){ // 서버에서 새로 data를 받는다.
-System.out.println("파일 존재 NEW"  );
+//System.out.println("파일 존재 NEW"  );
                 downloadFile(ctx, fileUrl, filePath);
             }
-System.out.println("파일 존재 기존파일 "  );
+//System.out.println("파일 존재 기존파일 "  );
             //String filePath = "D:\\work\\pet_hospital.xml";
             String xml = "";
             FileInputStream fis = null;
             try {
                 fis = ctx.openFileInput(filePath);
             }catch(Exception e){
-                System.out.println("파일 존재 FileInputStreamn null  "  );
+                //System.out.println("파일 존재 FileInputStreamn null  "  );
                 fileUrl = DayOfWeekUrl.valueOf(petgbn).getUrl(); // get file url( 월,화,수,목 )
                 downloadFile(ctx, fileUrl, filePath);
                 fis = ctx.openFileInput(filePath);
-                System.out.println("파일 존재 FileInputStreamn  fis  "  + fis);
+                //System.out.println("파일 존재 FileInputStreamn  fis  "  + fis);
             }
             int size = fis.available();
-            System.out.println("파일 존재 FileInputStreamn   size "+size  );
+            //System.out.println("파일 존재 FileInputStreamn   size "+size  );
             byte[] buffer = new byte[1024];
             //fis.read(buffer); // size가 클경우 outofmemory 발생
             int bytesRead;
@@ -93,7 +93,7 @@ System.out.println("파일 존재 기존파일 "  );
             }
             xml = sb.toString();
            // xml = new String(buffer, StandardCharsets.UTF_8);
-//System.out.println("xml"+xml);
+////System.out.println("xml"+xml);
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             //Document document = builder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
@@ -148,7 +148,7 @@ System.out.println("파일 존재 기존파일 "  );
                         //hospital = AnimalHospitalPool.borrowObject(name, phone, address, x, y, isnew, date, myLatitude, myLongitude);
                        // hospital = new AnimalHospital(name, phone, address, x, y, isnew, date,myLatitude, myLongitude);
                     }
- //System.out.println("cdhgold getName"+hospital.getName());
+ ////System.out.println("cdhgold getName"+hospital.getName());
                     hospitalList.add(hospital);
 
                 }
@@ -171,13 +171,13 @@ System.out.println("파일 존재 기존파일 "  );
                 Instant bInstant = b.getToday().toInstant();
                 LocalDate bLocalDate = bInstant.atZone(defaultZoneId).toLocalDate();
                 long bDaysDifference = Math.abs(ChronoUnit.DAYS.between(nowdt, bLocalDate));
- //System.out.println("cdhgold 1  nowdt "+nowdt+"    "+aLocalDate+"      "+aDaysDifference+"  "+ bLocalDate+ "    "+ bDaysDifference );
+ ////System.out.println("cdhgold 1  nowdt "+nowdt+"    "+aLocalDate+"      "+aDaysDifference+"  "+ bLocalDate+ "    "+ bDaysDifference );
                 if ((a.getIsNew()   && aDaysDifference <= 30) || ( b.getIsNew() && bDaysDifference <= 30)) {
-                   // System.out.println("cdhgold 1");
+                   // //System.out.println("cdhgold 1");
                     return -1;
 
                 } else {
-                    //System.out.println("cdhgold 3");
+                    ////System.out.println("cdhgold 3");
                     double distanceA = a.distanceTo(myLatitude, myLongitude);
                     double distanceB = b.distanceTo(myLatitude, myLongitude);
                     return Double.compare(distanceA, distanceB);

@@ -51,11 +51,11 @@ public class MainActivity extends AppCompatActivity  {
 
         Location loc = ListViewModel.getLocation();
         if(loc == null ) {
-            System.out.println("loc == null");
+            //System.out.println("loc == null");
             Location location = getCurrentLocation();// 현위치 위도,경도
             ListViewModel.setLocation(location);
         }
-        System.out.println("loc1 == "+loc);
+        //System.out.println("loc1 == "+loc);
         // xml data변경여부확인
         String BASE_URL = "http://kmetabus.com/";
         Retrofit retrofit = new Retrofit.Builder()
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity  {
             double latitude = location.getLatitude();
             double altitude = location.getAltitude();
 
-            System.out.println("Latitude1: " + latitude + ", Longitude1: " + longitude);
+            //System.out.println("Latitude1: " + latitude + ", Longitude1: " + longitude);
         }
 
         // 위치정보를 원하는 시간, 거리마다 갱신해준다.
@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity  {
             double latitude = location.getLatitude(); // 위도
             double altitude = location.getAltitude(); // 고도
             ListViewModel.setSloc(provider);
-//System.out.println("Latitude: " + latitude + ", Longitude: " + longitude);
+////System.out.println("Latitude: " + latitude + ", Longitude: " + longitude);
         } public void onStatusChanged(String provider, int status, Bundle extras) {
 
         } public void onProviderEnabled(String provider) {

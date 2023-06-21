@@ -148,7 +148,7 @@ public class AnimalHospitalList {
             Collections.sort(nodes, new Comparator<Node>() {
                 @Override
                 public int compare(Node node1, Node node2) {
-                    String isNew1 = null, isNew2 = null;
+                    String isNew1 = "false", isNew2 = "false";
 // 첫 번째 객체가 두 번째 객체보다 작으면 음의 정수, 같으면 0, 크면 양의 정수
                     String dist1 = ((Element) node1).getElementsByTagName("dist").item(0).getTextContent().trim();
                     String dist2 = ((Element) node2).getElementsByTagName("dist").item(0).getTextContent().trim();
@@ -161,18 +161,22 @@ public class AnimalHospitalList {
                     }
                     if ("0.0".equals(dist1) || "".equals(dist1)) {
                         dist1 = "500";
-                    } else if ("0.0".equals(dist2) || "".equals(dist2)) {
+                    }
+                    if ("0.0".equals(dist2) || "".equals(dist2)) {
                         dist2 = "500";
-                    } else if (Boolean.parseBoolean(isNew1) && !Boolean.parseBoolean(isNew2)) {
-                        // node1이 새 노드이고 node2가 새 노드가 아닌 경우, node1을 앞으로 보냅니다.
+                    }
+                    boolean bIsNew1 = Boolean.parseBoolean(isNew1);
+                    boolean bIsNew2 = Boolean.parseBoolean(isNew2);
+
+                    if (bIsNew1 && !bIsNew2) {
                         return -1;
-                    } else if (!Boolean.parseBoolean(isNew1) && Boolean.parseBoolean(isNew2)) {
-                        // node2가 새 노드이고 node1이 새 노드가 아닌 경우, node2를 앞으로 보냅니다.
+                    } else if (!bIsNew1 && bIsNew2) {
                         return 1;
+                    } else {
+                        return Double.compare(Double.parseDouble(dist1), Double.parseDouble(dist2));
                     }
 
 
-                    return Double.compare(Double.parseDouble(dist1), Double.parseDouble(dist2));
                 }
             });
 
